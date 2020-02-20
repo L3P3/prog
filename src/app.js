@@ -323,32 +323,31 @@ const tab_view = {
 };
 
 // ENTITIES //
-let id_counter = 0;
-const EC_OBJ = id_counter++;
-const EC_CLASS = id_counter++;
-const EC_TRAIT = id_counter++;
-const EC_PROP = id_counter++;
-const EC_NUM = id_counter++;
-const EC_ENUM = id_counter++;
+const EC_OBJ = 0;
+const EC_CLASS = 1;
+const EC_TRAIT = 2;
+const EC_PROP = 3;
+const EC_NUM = 4;
+const EC_ENUM = 5;
 
-const ET_EDIT = id_counter++;
-const ET_LABEL = id_counter++;
-const ET_TRAIT = id_counter++;
-const ET_CT_TEXT = id_counter++;
+const ET_EDIT = 100;
+const ET_LABEL = 101;
+const ET_TRAIT = 102;
+const ET_CT_TEXT = 103;
 
-const PROP_OBJ_ID = id_counter++;
-const PROP_OBJ_CLASS = id_counter++;
-const PROP_OBJ_HARD = id_counter++;
-const PROP_LABEL = id_counter++;
-const PROP_PROPS = id_counter++;
-const PROP_PROPS_F = id_counter++;
-const PROP_TRAITS = id_counter++;
-const PROP_CLASS_PARENT = id_counter++;
-const PROP_TRAIT_DEPS = id_counter++;
-const PROP_TO_TEXT = id_counter++;
-const PROP_PROP_CLASS = id_counter++;
-const PROP_PROP_NULL = id_counter++;
-const PROP_PROP_NATIVE = id_counter++;
+const PROP_OBJ_ID = 200;
+const PROP_OBJ_CLASS = 201;
+const PROP_OBJ_HARD = 202;
+const PROP_LABEL = 203;
+const PROP_PROPS = 204;
+const PROP_PROPS_F = 205;
+const PROP_TRAITS = 206;
+const PROP_CLASS_PARENT = 207;
+const PROP_TRAIT_DEPS = 208;
+const PROP_TO_TEXT = 209;
+const PROP_PROP_CLASS = 210;
+const PROP_PROP_NULL = 211;
+const PROP_PROP_NATIVE = 212;
 
 const entities = new Map();
 const prop_owners = {};
