@@ -1,0 +1,51 @@
+EDITING VIEWS
+class
+trait - set of properties that can fit multiple classes
+data - instance of a class
+
+CLASSES
+object - anything stored in a variable
+	number - monodimensional range
+		bool - true or false
+		int - minimal step given
+	set - holding variable number of objects
+		list - adding an order
+		map - key/value pairs
+		text - character string
+		graph - network of points
+		[function]
+	enum - defined number of child objects
+		vector - set of numbers that can be scaled
+		char - unicode character
+		[class]
+		[trait]
+
+TRAITS
+convert to <class> - can be converted to a class
+	bool - can be truthy or falsy
+	list - can be iterated
+	text - can be printed for persons
+convert from <class>
+	list - connecting multiple items to form one
+	text - can be entered by persons
+edit - can be seen and modified inside the editor
+view - can be shown as an ui element
+key <context> - can be identified inside a context
+	set - inside a set
+	device - on the device
+	universe - everywhere (uuid)
+equal - can be compared for equality
+store - can be represented as bytes
+reset - can get a default value
+locale - dependent on language/country
+label - has a short description
+count - can be increased/decreased atomicly
+scale - can be scaled/multiplied by a number
+negative - can be scaled by negative numbers
+add - can be added together
+tree - can have parents/children
+
+DATA
+all the classes and traits
+all the apps
+texts/images/video/sound/etc
