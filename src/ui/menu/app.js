@@ -23,15 +23,22 @@ export const menu_app = () => [
 					confirm('Alle Benutzerdaten löschen?')
 				) {
 					entities_reset();
+					onbeforeunload = null;
 					location.reload();
 				}
 			}
 		],
-		['Grafische Programmierung, ©2020'],
-		['95% in DroidEdit, Android 4.4'],
-		['5% in Notepad++, Windows XP'],
 		[
-			'L3P3.de',
+			'Über dieses Programm',
+			() => {
+				open('//l3p3.de/dok/graf.html');
+			}
+		],
+		['90% in DroidEdit'],
+		['5% in Notepad++'],
+		['5% in VS Code'],
+		[
+			'©2020, L3P3.de',
 			() => {
 				open('//l3p3.de');
 			}

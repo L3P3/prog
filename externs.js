@@ -17,6 +17,13 @@ var TYPE_VNODE;
 */
 var TYPE_COMPONENT;
 
+/**
+@typedef {Object<number, Array>}
+@dict
+*/
+var TYPE_ENTITY;
+
+/** @nosideeffects */
 function m(){}
 m.mount = function(){}
 

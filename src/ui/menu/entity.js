@@ -1,25 +1,18 @@
 import {
 	ENTITY,
 	entity_delete,
-	entity_get,
-	entity_label_get
+	entity_label_get,
+	entity_prop_native_get,
+	value_create_nat
 } from '../../etc/entity.js';
 
 export const menu_entity = entity => [
 	entity_label_get(entity),
 	[
 		[
-			'Typ: ' +
-			entity_label_get(
-				entity_get(
-					entity[ENTITY.PROP_OBJ_CLASS]
-				)
-			)
-		],
-		[
 			'Löschen',
 			(
-				entity[ENTITY.PROP_OBJ_HARD]
+				entity[ENTITY.PROP_OBJ_HARD][1]
 				? null
 				: () => (
 					confirm('Objekt löschen?') &&
@@ -33,10 +26,10 @@ export const menu_entity = entity => [
 		() => {
 			const label = prompt(
 				'Neue Bezeichnung eingeben:',
-				entity[ENTITY.PROP_LABEL] || ''
+				entity_prop_native_get(entity, ENTITY.PROP_OBJ_LABEL) || ''
 			);
 			if (label)
-				entity[ENTITY.PROP_LABEL] = label;
+				entity[ENTITY.PROP_OBJ_LABEL] = value_create_nat(label);
 		},
 		'Umbenennen'
 	]

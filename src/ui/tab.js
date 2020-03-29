@@ -2,7 +2,7 @@ import {
 	entity_create,
 	entity_get,
 	entity_label_get,
-	prop_to_text
+	entity_prop_text_get
 } from '../etc/entity.js';
 
 import {menu_open} from './menu.js';
@@ -56,7 +56,7 @@ export const tabs_component = {
 									? 'active'
 									: ''
 								),
-								title: entity_label_get(tab.content),
+								title: entity_label_get(tab[1]),
 								onclick: (
 									tab !== tab_active
 									? () => {
@@ -65,7 +65,7 @@ export const tabs_component = {
 									: null
 								)
 							},
-							entity_label_get(tab.content)
+							entity_label_get(tab[1])
 						)
 					)
 				),
@@ -98,7 +98,9 @@ export const tabs_component = {
 			tab_active
 			? m(
 				tab_component,
-				tab_active
+				{
+					tab: tab_active
+				}
 			)
 			: m(
 				'#page_empty',
@@ -110,13 +112,13 @@ export const tabs_component = {
 
 /** @type {TYPE_COMPONENT} */
 const tab_component = {
-	view: ({attrs}) => {
-		switch (attrs.type) {
+	view: ({attrs: {tab: [type, content]}}) => {
+		switch (type) {
 			case TAB_ENTITY:
 				return m(
 					tab_entity_component,
 					{
-						entity: attrs.content
+						entity: content
 					}
 				);
 			case TAB_METHOD:
@@ -128,18 +130,19 @@ const tab_component = {
 
 // ENTITY //
 const tab_entity_get = entity => (
-	tabs.find(tab =>
-		tab.type === TAB_ENTITY &&
-		tab.content === entity
+	tabs.find(([type, content]) =>
+		type === TAB_ENTITY &&
+		content === entity
 	)
 );
 export const tab_entity_create = entity => {
-	tabs.push(tab_active = {
-		type: TAB_ENTITY,
-		content: entity
-	});
+	tabs.push(tab_active = [
+		TAB_ENTITY,
+		entity
+	]);
 };
 export const tab_entity_open = entity => {
+	entity = entity_get(entity);
 	(tab_active = tab_entity_get(entity)) ||
 	tab_entity_create(entity);
 };
@@ -181,14 +184,17 @@ const tab_entity_component = {
 											color_b: 'blue',
 											color_f: 'white',
 											action: () => {
-												tab_entity_open(
-													entity_get(prop)
-												);
+												tab_entity_open(prop);
 											},
 											label: (
-												entity_label_get(entity_get(prop)) +
+												entity_label_get(
+													entity_get(prop)
+												) +
 												': ' +
-												prop_to_text(prop, entity[prop])
+												entity_prop_text_get(
+													entity,
+													prop
+												)
 											)
 										}
 									]

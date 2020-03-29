@@ -40,7 +40,14 @@ export const menu_component = {
 							m(
 								'.bar_button',
 								{
-									onclick: extra[1] || null,
+									onclick: (
+										extra[1]
+										? () => {
+											extra[1]() &&
+											menu_close();
+										}
+										: null
+									),
 									title: extra[2] || null
 								},
 								extra[0]

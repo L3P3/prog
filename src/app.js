@@ -6,7 +6,7 @@ import {
 import {menu_component} from './ui/menu.js';
 import {tabs_component} from './ui/tab.js';
 
-entities_load();
+location.hash !== '#reset' && entities_load();
 
 setInterval(onbeforeunload = entities_save, 6e5);
 
