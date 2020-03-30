@@ -35,6 +35,7 @@ console.log(await exec(
 		'assume_function_wrapper',
 		'charset UTF-8',
 		'compilation_level ADVANCED',
+		'define DEBUG=false',
 		'dependency_mode PRUNE',
 		'entry_point ./src/app.js',
 		'externs ./externs.js',

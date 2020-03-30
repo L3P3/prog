@@ -1,3 +1,4 @@
+/** @define {boolean} */
 export const DEBUG = true;
 
 export function assert(cond) {
