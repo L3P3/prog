@@ -51,8 +51,8 @@ div {
 #tabs > div {
 	margin: 0 2px;
 	max-width: 150px;
-	height: 37px;
 	border-top: 3px solid #222;
+	overflow-x: hidden;
 	
 	display: inline-block;
 	opacity: 0.7;
@@ -63,6 +63,7 @@ div {
 	padding: 0 6px;
 	text-overflow: ellipsis;
 	line-height: 34px;
+	vertical-align: top;
 }
 #tabs > div.active {
 	cursor: default;
@@ -134,14 +135,14 @@ div {
 .node_head {
 	height: 28px;
 	padding-top: 2px;
+	white-space: nowrap;
 }
 .node_head > div {
 	height: 100%;
 	display: inline-block;
 	padding: 0 4px;
-	margin-left: 1px;
+	margin-left: 2px;
 	line-height: 26px;
-	white-space: nowrap;
 	border-radius: 4px;
 	cursor: pointer;
 	
@@ -149,6 +150,7 @@ div {
 }
 .node_head > div:first-child {
 	padding-left: 34px;
+	margin-left: 0;
 }
 .node_branch {
 	position: relative;
