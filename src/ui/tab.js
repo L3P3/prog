@@ -1,8 +1,12 @@
 import {
+	ENTITY,
+	cls_color_get,
 	entity_create,
 	entity_get,
 	entity_label_get,
-	entity_prop_text_get
+	entity_prop_text_get,
+	entity_prop_native_get,
+	entity_prop_entity_get
 } from '../etc/entity.js';
 
 import {menu_open} from './menu.js';
@@ -15,6 +19,7 @@ const TAB_METHOD = 1;
 
 export const tabs = [];
 let tab_active = null;
+let tab_active_last = null;
 
 export const tab_close = tab => {
 	const index = tabs.indexOf(tab);
@@ -49,23 +54,10 @@ export const tabs_component = {
 					tabs
 					.map(tab =>
 						m(
-							'',
+							tab_head,
 							{
-								className: (
-									tab === tab_active
-									? 'active'
-									: ''
-								),
-								title: entity_label_get(tab[1]),
-								onclick: (
-									tab !== tab_active
-									? () => {
-											tab_active = tab;
-									}
-									: null
-								)
-							},
-							entity_label_get(tab[1])
+								tab
+							}
 						)
 					)
 				),
@@ -108,6 +100,42 @@ export const tabs_component = {
 			)
 		)
 	]
+};
+
+/** @type {TYPE_COMPONENT} */
+const tab_head_updated = ({attrs: {tab}, dom}) => {
+	if (
+		tab === tab_active &&
+		tab !== tab_active_last
+	) {
+		tab_active_last = tab;
+		dom.scrollIntoView();
+	}
+};
+const tab_head = {
+	oncreate: tab_head_updated,
+	onupdate: tab_head_updated,
+	view: ({attrs: {tab}}) => (
+		m(
+			'',
+			{
+				className: (
+					tab === tab_active
+					? 'active'
+					: ''
+				),
+				title: entity_label_get(tab[1]),
+				onclick: (
+					tab !== tab_active
+					? () => {
+							tab_active = tab;
+					}
+					: null
+				)
+			},
+			entity_label_get(tab[1])
+		)
+	)
 };
 
 /** @type {TYPE_COMPONENT} */
@@ -172,36 +200,47 @@ const tab_entity_component = {
 				branches: (
 					Object.keys(entity)
 					.map(key => Number(key))
-					.map(prop => ({
-						color: 'white',
-						action: null,
-						content: (
-							m(
-								node_component,
-								{
-									columns: [
-										{
-											color_b: 'blue',
-											color_f: 'white',
-											action: () => {
-												tab_entity_open(prop);
-											},
-											label: (
-												entity_label_get(
-													entity_get(prop)
-												) +
-												': ' +
-												entity_prop_text_get(
-													entity,
-													prop
+					.map(prop => {
+						const prop_obj = entity_get(prop);
+						const [color_f, color_b] = cls_color_get(
+							entity_prop_entity_get(prop_obj, ENTITY.PROP_PROP_CLASS)[ENTITY.PROP_OBJ_ID][1]
+						);
+						return {
+							color: 'white',
+							action: null,
+							content: (
+								m(
+									node_component,
+									{
+										columns: [
+											{
+												color_b,
+												color_f,
+												action: () => {
+													tab_entity_open(prop);
+												},
+												label: (
+													entity_label_get(
+														prop_obj
+													)
 												)
-											)
-										}
-									]
-								}
+											},
+											{
+												color_b,
+												color_f,
+												label: (
+													entity_prop_text_get(
+														entity,
+														prop
+													) || '-'
+												)
+											}
+										]
+									}
+								)
 							)
-						)
-					}))
+						};
+					})
 				)
 			}
 		)

@@ -1,5 +1,6 @@
-/** @define {boolean} */
-export const DEBUG = true;
+import {PROD} from '../env.js';
+
+export const DEBUG = !PROD;
 
 export function assert(cond) {
 	if (!DEBUG)

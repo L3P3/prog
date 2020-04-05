@@ -18,6 +18,10 @@ const exec = cmd => (
 	)
 );
 
+if (prod) {
+	fs.writeFileSync('./src/env.js', 'export const PROD = true;\n', 'utf8');
+}
+
 (async () => {
 
 console.log('optimizing...');
@@ -35,7 +39,6 @@ console.log(await exec(
 		'assume_function_wrapper',
 		'charset UTF-8',
 		'compilation_level ADVANCED',
-		'define DEBUG=false',
 		'dependency_mode PRUNE',
 		'entry_point ./src/app.js',
 		'externs ./externs.js',
@@ -44,6 +47,7 @@ console.log(await exec(
 		'language_in ECMASCRIPT_NEXT',
 		'language_out ECMASCRIPT6_STRICT',
 		'module_resolution WEBPACK',
+		'rewrite_polyfills false',
 		'strict_mode_input',
 		'use_types_for_optimization',
 		'warning_level VERBOSE'
@@ -105,4 +109,9 @@ if (
 }
 
 })()
-.catch(console.log);
+.catch(console.log)
+.finally(() => {
+	if (prod) {
+		fs.writeFileSync('./src/env.js', 'export const PROD = false;\n', 'utf8');
+	}
+});

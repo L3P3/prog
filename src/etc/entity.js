@@ -2,7 +2,7 @@ const localStorage_ = localStorage;
 
 import {
 	DEBUG,
-	assert,
+	assert
 } from './debug.js';
 
 import {
@@ -200,25 +200,37 @@ export const class_check_trait = (cls, trait) => (
 );
 
 /**
+	Checks if a class is a descendant of a class
+	@param {ENTITY} cls_check
+	@param {ENTITY} cls_target
+	@return {boolean}
+*/
+const class_check_descendant = (cls_check, cls_target) => {
+	//walk down the class tree
+	do
+		if (cls_check === cls_target)
+			return true;
+	while (
+		cls_check !== (
+			cls_check = entity_get(cls_check)[ENTITY.PROP_CLASS_PARENT][1]
+		)
+	);
+
+	return false;
+};
+
+/**
 	Checks if an entity is at least indirectly of a class
 	@param {TYPE_ENTITY} entity
 	@param {ENTITY} cls_target
 	@return {boolean}
 */
-export const entity_check_class = (entity, cls_target) => {
-	let cls_id = entity[ENTITY.PROP_OBJ_CLASS][1];
-	//walk down the class tree
-	do
-		if (cls_id === cls_target)
-			return true;
-	while (
-		cls_id !== (
-			cls_id = entity_get(cls_id)[ENTITY.PROP_CLASS_PARENT][1]
-		)
-	);
-	
-	return false;
-};
+export const entity_check_class = (entity, cls_target) => (
+	class_check_descendant(
+		entity[ENTITY.PROP_OBJ_CLASS][1],
+		cls_target
+	)
+);
 
 /**
 	Checks if an entity is indirectly implementing a trait
@@ -402,6 +414,24 @@ export const entities_save = () => {
 export const entities_reset = () => {
 	localStorage_.removeItem('entities');
 };
+
+// UI HELPERS //
+/**
+	Get the CSS color codes for a type
+	@param {ENTITY} cls
+	@return {Array<string>}
+*/
+export const cls_color_get = cls => (
+	cls === ENTITY.CLASS_CLASS
+	?	['white', 'blue']
+	:	class_check_descendant(cls, ENTITY.CLASS_BOOL)
+		? ['white', 'purple']
+		:	class_check_descendant(cls, ENTITY.CLASS_NUM)
+			?	['white', 'red']
+			:	class_check_descendant(cls, ENTITY.CLASS_SET)
+				?	['black', 'cyan']
+				:	['white', 'green']
+);
 
 // DEFINE CORE ENTITIES //
 /**

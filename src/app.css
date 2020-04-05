@@ -16,7 +16,6 @@ body {
 }
 div {
 	box-sizing: border-box;
-	/*border: 1px solid red;*/
 }
 .bar {
 	height: 50px;
@@ -27,8 +26,6 @@ div {
 }
 .bar > .bar_button {
 	margin: 5px;
-	width: 40px;
-	height: 40px;
 	
 	border-radius: 5px;
 	font-size: 28px;
@@ -41,18 +38,23 @@ div {
 	line-height: 40px;
 }
 #tabs {
-	overflow: auto hidden;
+	overflow-x: scroll;
+	-ms-overflow-style: -ms-autohiding-scrollbar;
+	scrollbar-width: none;
 	
-	padding-top: 10px;
+	padding-top: 13px;
 	white-space: nowrap;
+}
+#tabs::-webkit-scrollbar {
+	display: none;
 }
 #tabs > div {
 	margin: 0 2px;
 	max-width: 150px;
-	height: 40px;
+	height: 37px;
+	border-top: 3px solid #222;
 	
 	display: inline-block;
-	overflow: hidden;
 	opacity: 0.7;
 	background: #333;
 	font-size: 20px;
@@ -60,10 +62,11 @@ div {
 	
 	padding: 0 6px;
 	text-overflow: ellipsis;
-	line-height: 40px;
+	line-height: 34px;
 }
 #tabs > div.active {
 	cursor: default;
+	border-top-color: #ddd;
 }
 #page {
 	flex-grow: 1;
@@ -86,11 +89,17 @@ div {
 	right: 0;
 	bottom: 0;
 	
-	background: #33333380;
-	backdrop-filter: blur(5px);
+	background: #333333ee;
 	
 	display: flex;
 	flex-direction: column;
+}
+@supports (backdrop-filter: blur(5px)) or (-webkit-backdrop-filter: blur(5px)) {
+	#menu {
+		background: #33333377;
+		backdrop-filter: blur(5px);
+		-webkit-backdrop-filter: blur(5px);
+	}
 }
 #menu_title {
 	overflow: hidden;
@@ -130,6 +139,7 @@ div {
 	height: 100%;
 	display: inline-block;
 	padding: 0 4px;
+	margin-left: 1px;
 	line-height: 26px;
 	white-space: nowrap;
 	border-radius: 4px;
