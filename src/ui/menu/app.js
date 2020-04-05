@@ -34,9 +34,9 @@ export const menu_app = () => [
 				open('//l3p3.de/dok/graf.html');
 			}
 		],
-		['90% in DroidEdit'],
-		['5% in Notepad++'],
-		['5% in VS Code'],
+		['50% in DroidEdit'],
+		['2% in Notepad++'],
+		['48% in VS Code'],
 		[
 			'©2020, L3P3.de',
 			() => {
