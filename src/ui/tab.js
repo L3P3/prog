@@ -1,21 +1,21 @@
 import {
-	ENTITY,
-	cls_color_get,
 	entity_create,
 	entity_get,
-	entity_label_get,
-	entity_prop_text_get,
-	entity_prop_native_get,
-	entity_prop_entity_get
+	entity_label_get
 } from '../etc/entity.js';
 
+import {entity_component} from './entity.js';
 import {menu_open} from './menu.js';
-import {menu_entity} from './menu/entity.js';
 import {menu_main} from './menu/main.js';
-import {node_component} from './node.js';
 
-const TAB_ENTITY = 0;
-const TAB_METHOD = 1;
+/**
+	The type of a tab
+	@enum {number}
+*/
+const TAB = {
+	ENTITY: 0,
+	METHOD: 1
+};
 
 export const tabs = [];
 let tab_active = null;
@@ -89,7 +89,7 @@ export const tabs_component = {
 			'#page',
 			tab_active
 			? m(
-				tab_component,
+				tab_content,
 				{
 					tab: tab_active
 				}
@@ -102,7 +102,6 @@ export const tabs_component = {
 	]
 };
 
-/** @type {TYPE_COMPONENT} */
 const tab_head_updated = ({attrs: {tab}, dom}) => {
 	if (
 		tab === tab_active &&
@@ -112,6 +111,7 @@ const tab_head_updated = ({attrs: {tab}, dom}) => {
 		dom.scrollIntoView();
 	}
 };
+/** @type {TYPE_COMPONENT} */
 const tab_head = {
 	oncreate: tab_head_updated,
 	onupdate: tab_head_updated,
@@ -139,17 +139,17 @@ const tab_head = {
 };
 
 /** @type {TYPE_COMPONENT} */
-const tab_component = {
+const tab_content = {
 	view: ({attrs: {tab: [type, content]}}) => {
 		switch (type) {
-			case TAB_ENTITY:
+			case TAB.ENTITY:
 				return m(
-					tab_entity_component,
+					entity_component,
 					{
 						entity: content
 					}
 				);
-			case TAB_METHOD:
+			case TAB.METHOD:
 			default:
 				return null;
 		}
@@ -157,15 +157,16 @@ const tab_component = {
 };
 
 // ENTITY //
+
 const tab_entity_get = entity => (
 	tabs.find(([type, content]) =>
-		type === TAB_ENTITY &&
+		type === TAB.ENTITY &&
 		content === entity
 	)
 );
 export const tab_entity_create = entity => {
 	tabs.push(tab_active = [
-		TAB_ENTITY,
+		TAB.ENTITY,
 		entity
 	]);
 };
@@ -177,72 +178,4 @@ export const tab_entity_open = entity => {
 export const tab_entity_close = entity => {
 	const tab = tab_entity_get(entity);
 	tab && tab_close(tab);
-};
-
-/** @type {TYPE_COMPONENT} */
-const tab_entity_component = {
-	view: ({attrs: {entity}}) => (
-		m(
-			node_component,
-			{
-				columns: [
-					{
-						color_b: 'black',
-						color_f: 'white',
-						action: () => {
-							menu_open(
-								() => menu_entity(entity)
-							);
-						},
-						label: entity_label_get(entity),
-					}
-				],
-				branches: (
-					Object.keys(entity)
-					.map(key => Number(key))
-					.map(prop => {
-						const prop_obj = entity_get(prop);
-						const [color_f, color_b] = cls_color_get(
-							entity_prop_entity_get(prop_obj, ENTITY.PROP_PROP_CLASS)[ENTITY.PROP_OBJ_ID][1]
-						);
-						return {
-							color: 'white',
-							action: null,
-							content: (
-								m(
-									node_component,
-									{
-										columns: [
-											{
-												color_b,
-												color_f,
-												action: () => {
-													tab_entity_open(prop);
-												},
-												label: (
-													entity_label_get(
-														prop_obj
-													)
-												)
-											},
-											{
-												color_b,
-												color_f,
-												label: (
-													entity_prop_text_get(
-														entity,
-														prop
-													) || '-'
-												)
-											}
-										]
-									}
-								)
-							)
-						};
-					})
-				)
-			}
-		)
-	)
 };

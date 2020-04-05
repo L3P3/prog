@@ -11,8 +11,14 @@ export const node_component = {
 						m(
 							'div',
 							{
+								className: (
+									column.icon
+									?	'node_head_icon'
+									:	null
+								),
 								style: 'background:' + column.color_b + ';color:' + column.color_f,
-								onclick: column.action
+								onclick: column.action,
+								title: column.description || null
 							},
 							column.label
 						)
@@ -36,7 +42,7 @@ export const node_component = {
 									style: 'background:' + columns[0].color_b
 								}
 							),
-							m(
+							branch.action && m(
 								'.node_branch_dot',
 								{
 									style: 'border-color:' + columns[0].color_b + ';background:' + branch.color,

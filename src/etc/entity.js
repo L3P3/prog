@@ -56,7 +56,7 @@ export const ENTITY = {
 	Kind of stored value
 	@enum {number}
 */
-const VALUE = {
+export const VALUE = {
 	REF: 0,
 	NAT: 1,
 	DYN: 2,
@@ -130,7 +130,7 @@ const cls_prop_get_raw = (cls_id, prop) => {
 	@param {ENTITY} prop
 	@return {Array}
 */
-const entity_prop_get_raw = (entity, prop) => {
+export const entity_prop_get_raw = (entity, prop) => {
 	const value = entity[prop];
 
 	return (
@@ -259,51 +259,6 @@ export const entity_check_trait = (entity, trait) => {
 };
 
 /**
-	Gets a text representing the value of a property
-	@param {TYPE_ENTITY} entity
-	@param {ENTITY} prop
-	@return {string?}
-*/
-export const entity_prop_text_get = (entity, prop) => {
-	if (entity_check_trait(entity, ENTITY.TRAIT_AS_TEXT)) {
-		return '[dynamic text]';
-	}
-	
-	// const text = entity_prop_native_get(
-	// 	prop,
-	// 	ENTITY.PROP_AS_TEXT
-	// );
-
-	const [native, value] = entity_prop_get(entity, prop);
-
-	return (
-		native
-		?	String(value)
-		:	`[${
-				entity_label_get(value)
-			}]`
-	);
-};
-
-/**
-	Gets a text identifying an entity
-	@param {TYPE_ENTITY} entity
-	@return {string}
-*/
-export const entity_label_get = entity => (
-	entity_prop_native_get(
-		entity,
-		ENTITY.PROP_OBJ_LABEL
-	) ||
-	`[#${
-		entity_prop_native_get(
-			entity,
-			ENTITY.PROP_OBJ_ID
-		)
-	}]`
-);
-
-/**
 	Creates a reference to an entity
 	@param {ENTITY} entity
 	@return {Array}
@@ -417,6 +372,58 @@ export const entities_reset = () => {
 
 // UI HELPERS //
 /**
+	Gets a text representing the value of a property
+	@param {TYPE_ENTITY} entity
+	@param {ENTITY} prop
+	@return {string?}
+*/
+export const entity_prop_text_get = (entity, prop) => {
+	const [native, value] = entity_prop_get(entity, prop);
+
+	if (!native) return entity_label_get(value);
+
+	const prop_type = entity_get(prop)[ENTITY.PROP_PROP_CLASS][1];
+
+	return (
+		prop_type === ENTITY.CLASS_BOOL
+		?	(value ? '☑ Ja' : '☐ Nein')
+		:	prop_type === ENTITY.CLASS_TEXT
+			?	`"${value}"`
+			:	class_check_descendant(prop_type, ENTITY.CLASS_NUM)
+				?	'' + value
+				:	class_check_descendant(prop_type, ENTITY.CLASS_MAP)
+					?	`[${
+							Object.keys(value)
+							.map(key => key + ': ...')
+							.join(', ')
+						}]`
+					:	class_check_descendant(prop_type, ENTITY.CLASS_SET)
+						?	`[${
+								Array.from(value).join(', ')
+							}]`
+						:	'[nicht anzeigbar]'
+	);
+};
+
+/**
+	Gets a text identifying an entity
+	@param {TYPE_ENTITY} entity
+	@return {string}
+*/
+export const entity_label_get = entity => (
+	entity_prop_native_get(
+		entity,
+		ENTITY.PROP_OBJ_LABEL
+	) ||
+	`[#${
+		entity_prop_native_get(
+			entity,
+			ENTITY.PROP_OBJ_ID
+		)
+	}]`
+);
+
+/**
 	Get the CSS color codes for a type
 	@param {ENTITY} cls
 	@return {Array<string>}
@@ -432,6 +439,38 @@ export const cls_color_get = cls => (
 				?	['black', 'cyan']
 				:	['white', 'green']
 );
+
+/**
+	Edit a value of a prop of an entity
+	@param {TYPE_ENTITY} entity
+	@param {ENTITY} prop
+*/
+export const entity_prop_value_edit = (entity, prop) => {
+	const prop_obj = entity_get(prop);
+	const prop_type = prop_obj[ENTITY.PROP_PROP_CLASS][1];
+
+	switch (prop_type) {
+		case ENTITY.CLASS_BOOL:
+			entity[prop] = value_create_nat(
+				!entity_prop_native_get(entity, prop)
+			);
+			break;
+		case ENTITY.CLASS_TEXT: {
+			const value_new = prompt(
+				entity_label_get(prop_obj) + ':',
+				entity_prop_native_get(
+					entity,
+					prop
+				)
+			);
+			if (value_new !== null)
+				entity[prop] = value_create_nat(value_new);
+			break;
+		}
+		default:
+			alert('Bearbeitung von Werten dieses Typens (noch) nicht möglich.');
+	}
+};
 
 // DEFINE CORE ENTITIES //
 /**

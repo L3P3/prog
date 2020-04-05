@@ -1,9 +1,7 @@
 import {
 	ENTITY,
 	entity_delete,
-	entity_label_get,
-	entity_prop_native_get,
-	value_create_nat
+	entity_label_get
 } from '../../etc/entity.js';
 
 export const menu_entity = entity => [
@@ -20,17 +18,5 @@ export const menu_entity = entity => [
 				)
 			)
 		]
-	],
-	[
-		'✏',
-		() => {
-			const label = prompt(
-				'Neue Bezeichnung eingeben:',
-				entity_prop_native_get(entity, ENTITY.PROP_OBJ_LABEL) || ''
-			);
-			if (label)
-				entity[ENTITY.PROP_OBJ_LABEL] = value_create_nat(label);
-		},
-		'Umbenennen'
 	]
 ];

@@ -146,11 +146,14 @@ div {
 	border-radius: 4px;
 	cursor: pointer;
 	
+	overflow: hidden;
 	opacity: 0.7;
 }
 .node_head > div:first-child {
-	padding-left: 34px;
 	margin-left: 0;
+}
+.node_head > div.node_head_icon {
+	padding-left: 34px;
 }
 .node_branch {
 	position: relative;
