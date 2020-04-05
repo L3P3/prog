@@ -34,7 +34,7 @@ export const menu_entity_open = () => [
 ];
 
 const menu_entity_open_class = cls => [
-	'Vom Typ ' +
+	'Vom Typen ' +
 	entity_label_get(
 		entity_get(cls)
 	),
