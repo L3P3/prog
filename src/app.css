@@ -52,7 +52,7 @@ div {
 	margin: 0 2px;
 	max-width: 150px;
 	border-top: 3px solid #222;
-	overflow-x: hidden;
+	overflow: hidden;
 	
 	display: inline-block;
 	opacity: 0.7;
@@ -114,9 +114,10 @@ div {
 #menu_entries {
 	flex-grow: 1;
 	
-	overflow: hidden auto;
+	overflow-y: auto;
 }
 #menu_entries > div {
+	overflow: hidden;
 	margin: 3px;
 	height: 50px;
 	
@@ -126,7 +127,9 @@ div {
 	color: #aaa;
 	
 	padding: 0 10px;
+	text-overflow: ellipsis;
 	line-height: 50px;
+	white-space: nowrap;
 }
 #menu_entries > .action {
 	color: white;
