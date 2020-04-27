@@ -28,8 +28,13 @@ export const ENTITY = {
 	CLASS_TEXT: 10,
 	CLASS_FUNCTION: 11,
 	CLASS_ENUM: 12,
-	CLASS_OPTIONAL: 13,
-	CLASS_FUNCTION_PART: 14,
+	CLASS_ENUM_VALUES: 13,
+	CLASS_ENUM_VALUE: 14,
+	CLASS_OPTIONAL: 15,
+	CLASS_OPTIONAL_SOME: 16,
+	CLASS_OPTIONAL_NONE: 17,
+	CLASS_CHAR: 18,
+	CLASS_FUNCTION_PART: 19,
 
 	TRAIT_EDIT: 100,
 	TRAIT_CLASSY: 101,
@@ -44,12 +49,13 @@ export const ENTITY = {
 	PROP_CLASS_PARENT: 206,
 	PROP_TRAIT_DEPS: 207,
 	PROP_AS_TEXT: 208,
-	PROP_PROP_CLASS: 209,
+	PROP_PROP_TYPE: 209,
 	PROP_PROP_NULL: 210,
 	PROP_PROP_OWNER: 211,
 	PROP_SET_CONTENT_CLASS: 212,
 	PROP_MAP_KEY_CLASS: 213,
-	PROP_FUNCTION_INTERFACE: 214,
+	PROP_ENUM_VALUES: 214,
+	PROP_FUNCTION_INTERFACE: 215,
 };
 
 /**
@@ -74,7 +80,7 @@ export const entities = new Map();
 	@return {TYPE_ENTITY}
 */
 export const entity_get = id => (
-	DEBUG && assert(entities.has(id)),
+	DEBUG && assert(id !== undefined && entities.has(id)),
 	entities.get(id)
 );
 
@@ -382,26 +388,28 @@ export const entity_prop_text_get = (entity, prop) => {
 
 	if (!native) return entity_label_get(value);
 
-	const prop_type = entity_get(prop)[ENTITY.PROP_PROP_CLASS][1];
+	const prop_type = entity_get(prop)[ENTITY.PROP_PROP_TYPE][1];
 
 	return (
 		prop_type === ENTITY.CLASS_BOOL
 		?	(value ? '☑ Ja' : '☐ Nein')
 		:	prop_type === ENTITY.CLASS_TEXT
-			?	`"${value}"`
-			:	class_check_descendant(prop_type, ENTITY.CLASS_NUM)
-				?	'' + value
-				:	class_check_descendant(prop_type, ENTITY.CLASS_MAP)
-					?	`[${
-							Object.keys(value)
-							.map(key => key + ': ...')
-							.join(', ')
-						}]`
-					:	class_check_descendant(prop_type, ENTITY.CLASS_SET)
-						?	`[${
-								Array.from(value).join(', ')
-							}]`
-						:	'[nicht anzeigbar]'
+		?	`"${value}"`
+		:	entity_get(prop_type)[ENTITY.PROP_OBJ_CLASS][1] === ENTITY.CLASS_TRAIT
+		?	'[ein Merkmal]'
+		:	class_check_descendant(prop_type, ENTITY.CLASS_NUM)
+		?	'' + value
+		:	class_check_descendant(prop_type, ENTITY.CLASS_MAP)
+		?	`[${
+				Object.keys(value)
+				.map(key => key + ': ...')
+				.join(', ')
+			}]`
+		:	class_check_descendant(prop_type, ENTITY.CLASS_SET)
+		?	`[${
+			Array.from(value).join(', ')
+		}]`
+		:	'[nicht anzeigbar]'
 	);
 };
 
@@ -428,16 +436,18 @@ export const entity_label_get = entity => (
 	@param {ENTITY} cls
 	@return {Array<string>}
 */
-export const cls_color_get = cls => (
-	cls === ENTITY.CLASS_CLASS
+export const type_color_get = type => (
+	type === ENTITY.CLASS_CLASS
 	?	['white', 'blue']
-	:	class_check_descendant(cls, ENTITY.CLASS_BOOL)
-		? ['white', 'purple']
-		:	class_check_descendant(cls, ENTITY.CLASS_NUM)
-			?	['white', 'red']
-			:	class_check_descendant(cls, ENTITY.CLASS_SET)
-				?	['black', 'cyan']
-				:	['white', 'green']
+	:	entity_get(type)[ENTITY.PROP_OBJ_CLASS][1] === ENTITY.CLASS_TRAIT
+	?	['yellow', 'green']
+	:	class_check_descendant(type, ENTITY.CLASS_BOOL)
+	?	['white', 'purple']
+	:	class_check_descendant(type, ENTITY.CLASS_NUM)
+	?	['white', 'red']
+	:	class_check_descendant(type, ENTITY.CLASS_SET)
+	?	['black', 'cyan']
+	:	['white', 'green']
 );
 
 /**
@@ -447,7 +457,7 @@ export const cls_color_get = cls => (
 */
 export const entity_prop_value_edit = (entity, prop) => {
 	const prop_obj = entity_get(prop);
-	const prop_type = prop_obj[ENTITY.PROP_PROP_CLASS][1];
+	const prop_type = prop_obj[ENTITY.PROP_PROP_TYPE][1];
 
 	switch (prop_type) {
 		case ENTITY.CLASS_BOOL:
@@ -474,13 +484,17 @@ export const entity_prop_value_edit = (entity, prop) => {
 
 // DEFINE CORE ENTITIES //
 /**
-	Create a hardwired entity
+	Create a hardcoded entity
 	@param {ENTITY} id
 	@param {ENTITY} cls
 	@param {string} label
 	@param {TYPE_ENTITY=} props
 */
 const entity_define = (id, cls, label, props = {}) => {
+	DEBUG && (
+		assert(id !== undefined),
+		assert(cls !== undefined)
+	);
 	entities.set(
 		id,
 		{
@@ -494,7 +508,7 @@ const entity_define = (id, cls, label, props = {}) => {
 };
 
 /**
-	Create a hardwired class
+	Create a hardcoded class
 	@param {ENTITY} id
 	@param {string} label
 	@param {ENTITY} parent
@@ -502,6 +516,10 @@ const entity_define = (id, cls, label, props = {}) => {
 	@param {Array<ENTITY>=} traits
 */
 const entity_class_define = (id, label, parent, iprops, traits) => {
+	DEBUG && (
+		assert(id !== undefined),
+		assert(parent !== undefined)
+	);
 	const props = {
 		[ENTITY.PROP_CLASS_PARENT]: value_create_ref(parent),
 		[ENTITY.PROP_TRAITS]: value_create_nat(traits || [])
@@ -514,20 +532,24 @@ const entity_class_define = (id, label, parent, iprops, traits) => {
 };
 
 /**
-	Create a hardwired prop
+	Create a hardcoded prop
 	@param {ENTITY} id
 	@param {string} label
 	@param {boolean} nullable
 	@param {ENTITY} cls
 	@param {ENTITY} owner
 */
-const entity_prop_define = (id, label, nullable, cls, owner) => {
+const entity_prop_define = (id, label, nullable, type, owner) => {
+	DEBUG && (
+		assert(id !== undefined),
+		assert(type !== undefined)
+	);
 	entity_define(
 		id,
 		ENTITY.CLASS_PROP,
 		label,
 		{
-			[ENTITY.PROP_PROP_CLASS]: value_create_ref(cls),
+			[ENTITY.PROP_PROP_TYPE]: value_create_ref(type),
 			[ENTITY.PROP_PROP_NULL]: value_create_nat(nullable),
 			[ENTITY.PROP_PROP_OWNER]: value_create_ref(owner),
 		}
@@ -569,7 +591,7 @@ entity_class_define(
 entity_class_define(
 	ENTITY.CLASS_PROP, 'Eigenschaft', ENTITY.CLASS_OBJ,
 	{
-		[ENTITY.PROP_PROP_CLASS]: value_create_ref(ENTITY.CLASS_OBJ),
+		[ENTITY.PROP_PROP_TYPE]: value_create_ref(ENTITY.CLASS_OBJ),
 		[ENTITY.PROP_PROP_NULL]: value_create_nat(false),
 		[ENTITY.PROP_PROP_OWNER]: value_create_ref(ENTITY.CLASS_OBJ)
 	}
@@ -598,7 +620,11 @@ entity_class_define(
 		[ENTITY.PROP_MAP_KEY_CLASS]: value_create_ref(ENTITY.CLASS_OBJ)
 	}
 );
-entity_class_define(ENTITY.CLASS_TEXT, 'Text', ENTITY.CLASS_SET);
+entity_class_define(ENTITY.CLASS_TEXT, 'Text', ENTITY.CLASS_LIST,
+	{
+		[ENTITY.PROP_SET_CONTENT_CLASS]: value_create_ref(ENTITY.CLASS_CHAR)
+	}
+);
 entity_class_define(
 	ENTITY.CLASS_FUNCTION, 'Funktion', ENTITY.CLASS_SET,
 	{
@@ -607,11 +633,27 @@ entity_class_define(
 		[ENTITY.PROP_SET_CONTENT_CLASS]: value_create_ref(ENTITY.CLASS_FUNCTION_PART)
 	}
 );
-entity_class_define(ENTITY.CLASS_ENUM, 'Möglichkeit', ENTITY.CLASS_OBJ);
-entity_class_define(ENTITY.CLASS_OPTIONAL, 'Optionaler Wert', ENTITY.CLASS_ENUM);
+entity_class_define(ENTITY.CLASS_ENUM, 'Auswahl', ENTITY.CLASS_OBJ,
+	{
+		[ENTITY.PROP_ENUM_VALUES]: value_create_nat([])
+	}
+);
+entity_class_define(ENTITY.CLASS_ENUM_VALUES, 'Auswahl-Möglichkeiten', ENTITY.CLASS_SET,
+	{
+		[ENTITY.PROP_SET_CONTENT_CLASS]: value_create_ref(ENTITY.CLASS_ENUM_VALUE)
+	}
+);
+entity_class_define(ENTITY.CLASS_ENUM_VALUE, 'Auswahl-Möglichkeit', ENTITY.CLASS_OBJ);
+entity_class_define(
+	ENTITY.CLASS_OPTIONAL, 'Optionaler Wert', ENTITY.CLASS_ENUM,
+	{
+		[ENTITY.PROP_ENUM_VALUES]: value_create_nat([ENTITY.CLASS_OPTIONAL_SOME, ENTITY.CLASS_OPTIONAL_NONE])
+	}
+);
+entity_class_define(ENTITY.CLASS_CHAR, 'Zeichen', ENTITY.CLASS_ENUM);
 entity_class_define(ENTITY.CLASS_FUNCTION_PART, 'Funktionsteil', ENTITY.CLASS_ENUM);
 
-entity_define(ENTITY.TRAIT_EDIT, ENTITY.CLASS_TRAIT, 'Verwaltbar');
+entity_define(ENTITY.TRAIT_EDIT, ENTITY.CLASS_TRAIT, 'Bearbeitbar');
 entity_define(
 	ENTITY.TRAIT_CLASSY, ENTITY.CLASS_TRAIT, 'Klassisch',
 	{
@@ -630,18 +672,22 @@ entity_define(
 	}
 );
 
-entity_prop_define(ENTITY.PROP_OBJ_ID, 'Objekt-ID', false, ENTITY.CLASS_INT, ENTITY.CLASS_OBJ);
+entity_define(ENTITY.CLASS_OPTIONAL_SOME, ENTITY.CLASS_ENUM_VALUE, 'Etwas');
+entity_define(ENTITY.CLASS_OPTIONAL_NONE, ENTITY.CLASS_ENUM_VALUE, 'Nichts');
+
+entity_prop_define(ENTITY.PROP_OBJ_ID, 'ID', false, ENTITY.CLASS_INT, ENTITY.CLASS_OBJ);
 entity_prop_define(ENTITY.PROP_OBJ_CLASS, 'Klasse', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_OBJ);
-entity_prop_define(ENTITY.PROP_OBJ_HARD, 'Vorgegeben', false, ENTITY.CLASS_BOOL, ENTITY.CLASS_OBJ);
+entity_prop_define(ENTITY.PROP_OBJ_HARD, 'Statisch', false, ENTITY.CLASS_BOOL, ENTITY.CLASS_OBJ);
 entity_prop_define(ENTITY.PROP_OBJ_LABEL, 'Bezeichnung', true, ENTITY.CLASS_TEXT, ENTITY.CLASS_OBJ);
-entity_prop_define(ENTITY.PROP_PROPS, 'Instanzeigenschaften', false, ENTITY.CLASS_MAP, ENTITY.TRAIT_CLASSY);
+entity_prop_define(ENTITY.PROP_PROPS, 'Eigenschaften', false, ENTITY.CLASS_MAP, ENTITY.TRAIT_CLASSY);
 entity_prop_define(ENTITY.PROP_TRAITS, 'Merkmale', false, ENTITY.CLASS_SET, ENTITY.TRAIT_CLASSY);
-entity_prop_define(ENTITY.PROP_CLASS_PARENT, 'Elternklasse', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_CLASS);
+entity_prop_define(ENTITY.PROP_CLASS_PARENT, 'Eltern-Klasse', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_CLASS);
 entity_prop_define(ENTITY.PROP_TRAIT_DEPS, 'Abhängigkeiten', false, ENTITY.CLASS_SET, ENTITY.CLASS_TRAIT);
 entity_prop_define(ENTITY.PROP_AS_TEXT, 'Darstellung als Text', false, ENTITY.CLASS_TEXT, ENTITY.TRAIT_AS_TEXT);
-entity_prop_define(ENTITY.PROP_PROP_CLASS, 'Typ', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_PROP);
-entity_prop_define(ENTITY.PROP_PROP_NULL, 'Optional', false, ENTITY.CLASS_BOOL, ENTITY.CLASS_PROP);
-entity_prop_define(ENTITY.PROP_PROP_OWNER, 'Ursprung', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_PROP);
-entity_prop_define(ENTITY.PROP_SET_CONTENT_CLASS, 'Inhaltstyp', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_SET);
-entity_prop_define(ENTITY.PROP_MAP_KEY_CLASS, 'Schlüsseltyp', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_MAP);
+entity_prop_define(ENTITY.PROP_PROP_TYPE, 'Wert-Typ', false, ENTITY.TRAIT_CLASSY, ENTITY.CLASS_PROP);
+entity_prop_define(ENTITY.PROP_PROP_NULL, 'Erratbar', false, ENTITY.CLASS_BOOL, ENTITY.CLASS_PROP);
+entity_prop_define(ENTITY.PROP_PROP_OWNER, 'Ursprung', false, ENTITY.TRAIT_CLASSY, ENTITY.CLASS_PROP);
+entity_prop_define(ENTITY.PROP_SET_CONTENT_CLASS, 'Element-Klasse', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_SET);
+entity_prop_define(ENTITY.PROP_MAP_KEY_CLASS, 'Schlüssel-Klasse', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_MAP);
+entity_prop_define(ENTITY.PROP_ENUM_VALUES, 'Auswahl-Möglichkeiten', false, ENTITY.CLASS_ENUM_VALUES, ENTITY.CLASS_ENUM);
 entity_prop_define(ENTITY.PROP_FUNCTION_INTERFACE, 'Schnittstelle', false, ENTITY.CLASS_SET, ENTITY.CLASS_FUNCTION);

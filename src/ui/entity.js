@@ -1,7 +1,7 @@
 import {
 	ENTITY,
 	VALUE,
-	cls_color_get,
+	type_color_get,
 	entity_get,
 	entity_label_get,
 	entity_prop_entity_get,
@@ -19,7 +19,7 @@ import {tab_entity_open} from './tab.js';
 /** @type {TYPE_COMPONENT} */
 export const entity_component = {
 	view: ({attrs: {entity}}) => {
-		const [color_f, color_b] = cls_color_get(
+		const [color_f, color_b] = type_color_get(
 			entity[ENTITY.PROP_OBJ_CLASS][1]
 		);
 
@@ -44,9 +44,10 @@ export const entity_component = {
 					.map(key => Number(key))
 					.map(prop => {
 						const prop_obj = entity_get(prop);
-						const prop_obj_cls = entity_prop_entity_get(prop_obj, ENTITY.PROP_PROP_CLASS);
-						const prop_obj_cls_id = prop_obj_cls[ENTITY.PROP_OBJ_ID][1];
-						const [color_f, color_b] = cls_color_get(prop_obj_cls_id);
+						const prop_obj_type = entity_prop_entity_get(prop_obj, ENTITY.PROP_PROP_TYPE);
+						const [color_f, color_b] = type_color_get(
+							prop_obj_type[ENTITY.PROP_OBJ_ID][1]
+						);
 
 						const [val_type, val_value] = entity_prop_get_raw(entity, prop);
 
@@ -62,7 +63,7 @@ export const entity_component = {
 											color_b,
 											action: () => tab_entity_open(prop),
 											description: `Eigenschaft vom Typen ${
-												entity_label_get(prop_obj_cls)
+												entity_label_get(prop_obj_type)
 											}${
 												entity_prop_native_get(prop_obj, ENTITY.PROP_PROP_NULL)
 												?	', optional'

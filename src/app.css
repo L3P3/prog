@@ -49,7 +49,7 @@ div {
 	display: none;
 }
 #tabs > div {
-	margin: 0 2px;
+	margin-right: 3px;
 	max-width: 150px;
 	border-top: 3px solid #222;
 	overflow: hidden;
@@ -64,6 +64,9 @@ div {
 	text-overflow: ellipsis;
 	line-height: 34px;
 	vertical-align: top;
+}
+#tabs > div:last-child {
+	margin-right: 0;
 }
 #tabs > div.active {
 	cursor: default;
