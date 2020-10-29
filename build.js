@@ -69,7 +69,7 @@ if (code_js.endsWith(';')) {
 if (code_css_promise !== null)
 	code_css = await code_css_promise;
 
-const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><meta name=viewport content="width=device-width"><script src=https://unpkg.com/mithril@2.0.4/mithril.min.js></script><style>${code_css}</style></head><body><script>${code_js}</script></body></html>`;
+const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><link rel=manifest href=/prog-manifest.json><meta name=viewport content="width=device-width"><script src=https://unpkg.com/mithril@2.0.4/mithril.min.js></script><style>${code_css}</style></head><body><script>${code_js}</script></body></html>`;
 
 if (fs.readFileSync('./build/app.html', 'utf8') === code_html) {
 	console.log('no file changes');
