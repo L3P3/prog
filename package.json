@@ -5,7 +5,8 @@
 	"main": "app.js",
 	"scripts": {
 		"build-prod": "node build.js p",
-		"build-dev": "node build.js"
+		"build-dev": "node build.js",
+		"build-sync": "rsync -rt ./build/ l3p3.de:/media/Archiv/Entwicklung/js/prog/build/"
 	},
 	"keywords": [],
 	"author": "L3P3",

@@ -1,4 +1,4 @@
-const menu_stack = [];
+export const menu_stack = [];
 			
 export const menu_open = menu => {
 	menu_stack.push(menu);

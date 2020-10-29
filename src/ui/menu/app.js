@@ -3,14 +3,20 @@ import {
 	entities_save
 } from '../../etc/entity.js';
 
+let prompt_install = null;
+
 export const menu_app = () => [
 	'Erweitert',
 	[
 		[
-			'Test',
-			() => {
-				alert('Hallo, Welt!');
-			}
+			'Als App installieren',
+			prompt_install && (() => {
+				prompt_install.prompt()
+				.then(() => {
+					prompt_install = null;
+					m.redraw();
+				})
+			})
 		],
 		[
 			'Alles speichern',
@@ -34,9 +40,12 @@ export const menu_app = () => [
 				open('//l3p3.de/dok/graf.html');
 			}
 		],
-		['50% in DroidEdit'],
-		['2% in Notepad++'],
-		['48% in VS Code'],
+		[
+			'Test',
+			() => {
+				alert('Hallo, Welt!');
+			}
+		],
 		[
 			'©2020, L3P3.de',
 			() => {
@@ -45,3 +54,9 @@ export const menu_app = () => [
 		]
 	]
 ];
+
+window.onbeforeinstallprompt = e => {
+	(
+		prompt_install = e
+	).preventDefault();
+};

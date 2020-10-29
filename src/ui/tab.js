@@ -5,7 +5,10 @@ import {
 } from '../etc/entity.js';
 
 import {entity_component} from './entity.js';
-import {menu_open} from './menu.js';
+import {
+	menu_open,
+	menu_stack
+} from './menu.js';
 import {menu_main} from './menu/main.js';
 
 /**
@@ -87,12 +90,22 @@ export const tabs_component = {
 		),
 		m(
 			'#page',
+			{
+				className: (
+					menu_stack.length > 0
+					?	'blurred'
+					:	null
+				)
+			},
 			tab_active
 			? m(
-				tab_content,
-				{
-					tab: tab_active
-				}
+				'div',
+				m(
+					tab_content,
+					{
+						tab: tab_active
+					}
+				)
 			)
 			: m(
 				'#page_empty',

@@ -32,6 +32,7 @@ var TYPE_ENTITY;
 /** @nosideeffects */
 function m(){}
 m.mount = function(){}
+m.redraw = function(){}
 
 var localStorage = {
 	getItem: function(){},
@@ -40,5 +41,6 @@ var localStorage = {
 };
 function open(){}
 
+function onbeforeinstallprompt(){}
 function onbeforeunload(){}
 function onerror(){}
