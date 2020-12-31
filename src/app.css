@@ -40,7 +40,7 @@ div {
 	text-align: center;
 	line-height: 40px;
 }
-#tabs {
+.tabs {
 	overflow-x: auto;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 	scrollbar-width: thin;
@@ -49,7 +49,7 @@ div {
 	display: flex;
 	align-items: flex-end;
 }
-#tabs > div {
+.tabs > div {
 	flex: 1 0 auto;
 	max-width: 150px;
 	margin-right: 3px;
@@ -66,40 +66,40 @@ div {
 	text-overflow: ellipsis;
 	line-height: 34px;
 }
-#tabs > div:last-child {
+.tabs > div:last-child {
 	margin-right: 0;
 }
-#tabs > div.active {
+.tabs > div.active {
 	cursor: default;
 	border-top-color: #ddd;
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-	#tabs {
+	.tabs {
 		transform: rotateX(180deg);
 		-ms-transform: rotateX(180deg);
 		-webkit-transform: rotateX(180deg);
 		
 		align-items: flex-start;
 	}
-	#tabs::-webkit-scrollbar {
+	.tabs::-webkit-scrollbar {
 		height: 10px;
 	}
-	#tabs::-webkit-scrollbar-thumb {
+	.tabs::-webkit-scrollbar-thumb {
 		background: #333;
 		border-radius: 5px;
 	}
-	#tabs::-webkit-scrollbar-thumb:hover {
+	.tabs::-webkit-scrollbar-thumb:hover {
 		background: #aaa;
 	}
-	#tabs > div {
+	.tabs > div {
 		transform: rotateX(180deg);
 		-ms-transform: rotateX(180deg);
 		-webkit-transform: rotateX(180deg);
 	}
 }
-#page {
+.page {
 	flex-grow: 1;
 	contain: strict;
 	
@@ -110,26 +110,26 @@ div {
 	will-change: opacity;
 	transition: opacity 1s;
 }
-#page.blurred {
+.page.blurred {
 	opacity: .1;
 }
 @supports (filter: blur(5px)) or (-webkit-filter: blur(5px)) {
-	#page.blurred {
+	.page.blurred {
 		opacity: .3;
 	}
-	#page.blurred > div {
+	.page.blurred > div {
 		filter: blur(5px);
 		-webkit-filter: blur(5px);
 	}
 }
-#page_empty {
+.page_empty {
 	margin: 50px 0;
 	
 	opacity: 0.5;
 	
 	text-align: center;
 }
-#menu {
+.menu {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -140,7 +140,7 @@ div {
 	display: flex;
 	flex-direction: column;
 }
-#menu_title {
+.menu_title {
 	overflow: hidden;
 	font-size: 24px;
 	
@@ -149,12 +149,12 @@ div {
 	line-height: 50px;
 	white-space: nowrap;
 }
-#menu_entries {
+.menu_entries {
 	flex-grow: 1;
 	
 	overflow-y: auto;
 }
-#menu_entries > div {
+.menu_entries > div {
 	overflow: hidden;
 	margin: 3px;
 	height: 50px;
@@ -169,7 +169,7 @@ div {
 	line-height: 50px;
 	white-space: nowrap;
 }
-#menu_entries > .action {
+.menu_entries > .action {
 	color: white;
 	cursor: pointer;
 }
@@ -237,9 +237,9 @@ div {
 	opacity: 0.7;
 }
 .bar > .bar_button:active,
-#tabs > div:active,
-#tabs > div.active,
-#menu_entries > .action:active,
+.tabs > div:active,
+.tabs > div.active,
+.menu_entries > .action:active,
 .node_head > div:active,
 .node_branch > .node_branch_dot:active {
 	opacity: 1;

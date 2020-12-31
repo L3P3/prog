@@ -37,11 +37,11 @@ console.log(await exec(
 	'closure-compiler' +
 	[
 		'assume_function_wrapper',
+		'property_renaming_report /tmp/prog-props.map',
 		'charset UTF-8',
 		'compilation_level ADVANCED',
 		'dependency_mode PRUNE',
 		'entry_point ./src/app.js',
-		'externs ./externs.js',
 		'js ./src',
 		'js_output_file /tmp/prog-min.js',
 		'language_in ECMASCRIPT_NEXT',
@@ -66,10 +66,34 @@ if (code_js.endsWith(';')) {
 	code_js = code_js.slice(0, -1);
 }
 
-if (code_css_promise !== null)
-	code_css = await code_css_promise;
+const renamings = (
+	fs.readFileSync('/tmp/prog-props.map', 'utf8')
+	.trim()
+	.split('\n')
+	.map(entry => entry.split(':'))
+);
+fs.unlinkSync('/tmp/prog-props.map');
 
-const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><link rel=manifest href=/prog-manifest.json><meta name=viewport content="width=device-width"><script src=https://unpkg.com/mithril@2.0.4/mithril.min.js></script><style>${code_css}</style></head><body><script>${code_js}</script></body></html>`;
+if (code_css_promise !== null)
+	code_css = '' + await code_css_promise;
+
+	const nchars = new Set('{[.:> '.split(''));
+
+	for (const [from, to] of renamings) {
+		if (!code_css.includes('.' + from)) continue;
+		console.log('renaming css class ' + from + ' to ' + to);
+		const rest = code_css.split('.' + from);
+		let code_css_new = rest[0];
+		for (let i = 1; i < rest.length; ++i) {
+			code_css_new += '.' + (
+				nchars.has(rest[i].charAt(0)) ? to : from
+			);
+			code_css_new += rest[i];
+		}
+		code_css = code_css_new;
+	}
+
+const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><link rel=manifest href=/prog-manifest.json><meta name=viewport content="width=device-width"><script src=https://l3p3.de/shr/lui.js></script><style>${code_css}</style></head><body><script>${code_js}</script></body></html>`;
 
 if (fs.readFileSync('./build/app.html', 'utf8') === code_html) {
 	console.log('no file changes');

@@ -6,9 +6,9 @@ import {
 } from './debug.js';
 
 import {
-	tab_entity_close,
-	tab_entity_create,
-} from '../ui/tab.js';
+	CMD_TAB_CLOSE,
+	CMD_TAB_OPEN_ENTITY
+} from './store.js';
 
 /**
 	The ID of known entities
@@ -288,7 +288,7 @@ export const value_create_dyn = getter => [VALUE.DYN, getter];
 /**
 	Creates a custom entity, interactive
 */
-export const entity_create = () => {
+export const entity_create = store_dispatch => {
 	const label = prompt(
 		'Bezeichnung eingeben:',
 		''
@@ -302,20 +302,24 @@ export const entity_create = () => {
 			[ENTITY.PROP_OBJ_LABEL]: value_create_nat(label)
 		};
 		entities.set(id, entity);
-		tab_entity_create(entity);
+		store_dispatch(CMD_TAB_OPEN_ENTITY, id);
 		return true;
 	}
+	return false;
 };
 
 /**
 	Deletes an entity by its ID
 	@param {ENTITY} entity
 */
-export const entity_delete = entity => {
+export const entity_delete = (
+	store_dispatch,
+	entity
+) => {
 	DEBUG && assert(entities.has(entity));
 
 	entities.delete(entity);
-	tab_entity_close(entity);
+	store_dispatch(CMD_TAB_CLOSE, 'e' + entity);
 };
 
 /**
