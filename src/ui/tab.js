@@ -30,10 +30,14 @@ export const TAB = {
 	METHOD: 1
 }
 
-const TabHead_effect_show = (dom, active) => {
+const TabHead_effect_show = (dom, active) => (
 	active &&
-		dom.scrollIntoView();
-}
+		setTimeout(
+			() => dom.scrollIntoView(),
+			0
+		),
+	null
+)
 
 const TabHead = ({
 	I: tab,
