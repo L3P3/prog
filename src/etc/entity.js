@@ -11,6 +11,11 @@ import {
 } from './store.js';
 
 /**
+	@typedef {Object<number, Array>}
+*/
+var TYPE_ENTITY;
+
+/**
 	The ID of known entities
 	@enum {number}
 */

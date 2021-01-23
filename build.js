@@ -34,7 +34,7 @@ const code_css_promise = (
 );
 
 console.log(await exec(
-	'closure-compiler' +
+	'./node_modules/.bin/google-closure-compiler' +
 	[
 		'assume_function_wrapper',
 		'property_renaming_report /tmp/prog-props.map',
@@ -46,7 +46,7 @@ console.log(await exec(
 		'js_output_file /tmp/prog-min.js',
 		'language_in ECMASCRIPT_NEXT',
 		'language_out ECMASCRIPT6_STRICT',
-		'module_resolution WEBPACK',
+		'module_resolution BROWSER',
 		'rewrite_polyfills false',
 		'strict_mode_input',
 		'use_types_for_optimization',
@@ -93,7 +93,7 @@ if (code_css_promise !== null)
 		code_css = code_css_new;
 	}
 
-const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><link rel=manifest href=/prog-manifest.json><meta name=viewport content="width=device-width"><script src=https://l3p3.de/shr/lui.js></script><style>${code_css}</style></head><body><script>${code_js}</script></body></html>`;
+const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><link rel=manifest href=/prog-manifest.json><meta name=viewport content="width=device-width"><style>${code_css}</style></head><body><script src=/shr/lui.js></script><script>${code_js}</script></body></html>`;
 
 if (fs.readFileSync('./build/app.html', 'utf8') === code_html) {
 	console.log('no file changes');

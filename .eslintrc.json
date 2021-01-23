@@ -5,12 +5,10 @@
     },
     "extends": "eslint:recommended",
     "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly",
-        "m": "readonly"
+        "lui": false
     },
     "parserOptions": {
-        "ecmaVersion": 2018,
+        "ecmaVersion": 9,
         "sourceType": "module"
     },
     "rules": {

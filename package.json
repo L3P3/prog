@@ -1,6 +1,7 @@
 {
 	"name": "prog",
 	"version": "0.1.1",
+	"repository": "https://github.com/l3p3/prog",
 	"description": "graphical programming system",
 	"main": "app.js",
 	"scripts": {
@@ -12,7 +13,8 @@
 	"author": "L3P3",
 	"license": "ISC",
 	"devDependencies": {
-		"cssnano": "^4.1.10",
-		"eslint": "^6.8.0"
+		"cssnano": "latest",
+		"eslint": "latest",
+		"google-closure-compiler": "latest"
 	}
 }

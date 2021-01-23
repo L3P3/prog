@@ -202,12 +202,6 @@ lui.node_map = function(component, data, props){}
 */
 lui.now = function(){}
 
-/**
-	@typedef {Object<number, Array>}
-	@dict
-*/
-var TYPE_ENTITY
-
 var localStorage = {
 	getItem: function(){},
 	setItem: function(){},

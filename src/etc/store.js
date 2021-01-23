@@ -15,11 +15,8 @@ export const CMD_TAB_CLOSE_ALL = 8;
 		id: string,
 		type: number,
 		content: number
-	}}
-*/
-var TYPE_TAB;
+	}} TYPE_TAB
 
-/**
 	@typedef {{
 		menu_stack: !Array<function(TYPE_STATE, function(number, *):void):Array>,
 		tab: {
@@ -27,9 +24,8 @@ var TYPE_TAB;
 			active: ?number
 		},
 		rcount: number
-	}}
+	}} TYPE_STATE
 */
-var TYPE_STATE;
 
 /**
 	@type {Array<function(TYPE_STATE, *=):TYPE_STATE>}
