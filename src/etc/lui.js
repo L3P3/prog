@@ -1,5 +1,7 @@
 export const lui_ = lui;
 
+export const defer = lui_.defer;
+export const defer_end = lui_.defer_end;
 export const hook_assert = lui_.hook_assert;
 export const hook_async = lui_.hook_async;
 export const hook_callback = lui_.hook_callback;
@@ -7,6 +9,7 @@ export const hook_delay = lui_.hook_delay;
 export const hook_dom = lui_.hook_dom;
 export const hook_effect = lui_.hook_effect;
 export const hook_first = lui_.hook_first;
+export const hook_map = lui_.hook_map;
 export const hook_memo = lui_.hook_memo;
 export const hook_object_changes = lui_.hook_object_changes;
 export const hook_prev = lui_.hook_prev;

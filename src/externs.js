@@ -29,7 +29,7 @@ var TYPE_PROPS_S;
 		F: (void|TYPE_PROPS_F),
 		R: (void|function(HTMLElement):void),
 		S: (void|TYPE_PROPS_S),
-		I: (void|TYPE_NODEDATA)
+		I: (void|TYPE_NODEDATA),
 	}}
 	@dict
 */
@@ -98,6 +98,15 @@ lui.hook_effect = function(effect, deps){}
 	@return {boolean}
 */
 lui.hook_first = function(){}
+
+/**
+	@template T
+	@param {function(?):T} getter
+	@param {TYPE_NODEDATA} data
+	@param {?Array=} deps
+	@return {T}
+*/
+lui.hook_map = function(getter, data, deps){}
 
 /**
 	@template T

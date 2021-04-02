@@ -1,19 +1,22 @@
-const localStorage_ = localStorage;
+import {
+	defer,
+	defer_end,
+	hook_memo,
+} from './lui.js';
 
 import {
 	DEBUG,
-	assert
+	assert,
 } from './debug.js';
-
+import {hook_subscribe} from './helpers.js';
 import {
 	CMD_TAB_CLOSE,
-	CMD_TAB_OPEN_ENTITY
+	CMD_TAB_OPEN_ENTITY,
 } from './store.js';
 
 /**
-	@typedef {Object<number, Array>}
+	@typedef {Object<number, Array>} TYPE_ENTITY
 */
-var TYPE_ENTITY;
 
 /**
 	The ID of known entities
@@ -77,17 +80,69 @@ export const VALUE = {
 	Stores all entities
 	@type {Map<ENTITY, TYPE_ENTITY>}
 */
-export const entities = new Map();
+const entities = new Map;
+
+const entities_listeners = [];
+
+/**
+	Reexecute hooks
+*/
+const hooks_refresh = () => {
+	//console.log('hook_refresh', entities_listeners.length);
+	defer();
+	for (const item of entities_listeners) item();
+	defer_end();
+}
+
+/**
+	Gets filtered list of entities
+	@param {function(TYPE_ENTITY}:boolean=} filter
+	@return {Array<ENTITY>}
+*/
+export const hook_entities = filter => (
+	hook_memo(
+		entities_list,
+		[
+			filter,
+			hook_subscribe(entities_listeners)
+		]
+	)
+)
+
+/**
+	Get entity props
+	@param {ENTITY} id
+	@return {?TYPE_ENTITY}
+*/
+export const hook_entity = id => (
+	hook_memo(
+		entity_get_try,
+		[
+			id,
+			hook_subscribe(entities_listeners)
+		]
+	)
+)
+
+/**
+	Get an entity by its ID
+	@param {ENTITY} id
+	@return {?TYPE_ENTITY}
+*/
+const entity_get_try = id => (
+	DEBUG && assert(id !== undefined),
+	entities.get(id) || null
+)
 
 /**
 	Get an entity by its ID
 	@param {ENTITY} id
 	@return {TYPE_ENTITY}
 */
-export const entity_get = id => (
+const entity_get = id => (
 	DEBUG && assert(id !== undefined && entities.has(id)),
-	entities.get(id)
-);
+	/** @type {TYPE_ENTITY} */ (entity_get_try(id))
+)
 
 /**
 	Get the default prop value in a class
@@ -133,7 +188,7 @@ const cls_prop_get_raw = (cls_id, prop) => {
 	);
 
 	return prop_owner[ENTITY.PROP_PROPS][1][prop];
-};
+}
 
 /**
 	Get the uncomputed prop value of an entity
@@ -152,7 +207,7 @@ export const entity_prop_get_raw = (entity, prop) => {
 				prop
 			)
 	);
-};
+}
 
 /**
 	Get the computed prop value of an entity
@@ -170,7 +225,7 @@ const entity_prop_get = (entity, prop) => {
 			?	[true, val_value]
 			:	val_value(entity, prop)
 	);
-};
+}
 
 /**
 	Get the computed native value of an entity prop
@@ -184,7 +239,7 @@ export const entity_prop_native_get = (entity, prop) => {
 	DEBUG && assert(native);
 	
 	return value;
-};
+}
 
 /**
 	Get the computed referenced object of an entity prop
@@ -198,7 +253,7 @@ export const entity_prop_entity_get = (entity, prop) => {
 	DEBUG && assert(!native);
 	
 	return value;
-};
+}
 
 /**
 	Checks if a class is implementing a trait
@@ -208,7 +263,7 @@ export const entity_prop_entity_get = (entity, prop) => {
 */
 export const class_check_trait = (cls, trait) => (
 	cls[ENTITY.PROP_TRAITS].includes(trait)
-);
+)
 
 /**
 	Checks if a class is a descendant of a class
@@ -228,7 +283,7 @@ const class_check_descendant = (cls_check, cls_target) => {
 	);
 
 	return false;
-};
+}
 
 /**
 	Checks if an entity is at least indirectly of a class
@@ -241,7 +296,7 @@ export const entity_check_class = (entity, cls_target) => (
 		entity[ENTITY.PROP_OBJ_CLASS][1],
 		cls_target
 	)
-);
+)
 
 /**
 	Checks if an entity is indirectly implementing a trait
@@ -267,7 +322,7 @@ export const entity_check_trait = (entity, trait) => {
 	);
 	
 	return false;
-};
+}
 
 /**
 	Creates a reference to an entity
@@ -307,11 +362,12 @@ export const entity_create = store_dispatch => {
 			[ENTITY.PROP_OBJ_LABEL]: value_create_nat(label)
 		};
 		entities.set(id, entity);
+		hooks_refresh();
 		store_dispatch(CMD_TAB_OPEN_ENTITY, id);
 		return true;
 	}
 	return false;
-};
+}
 
 /**
 	Deletes an entity by its ID
@@ -325,25 +381,31 @@ export const entity_delete = (
 
 	entities.delete(entity);
 	store_dispatch(CMD_TAB_CLOSE, 'e' + entity);
-};
+
+	hooks_refresh();
+}
 
 /**
 	Lists all entities, optional filter function
 	@param {function(TYPE_ENTITY):boolean=} filter
-	@return {Array<TYPE_ENTITY>}
+	@return {Array<ENTITY>}
 */
-export const entities_list = filter => {
+const entities_list = filter => {
 	if (!filter)
 		return Array.from(
-			entities.values()
+			entities.keys()
 		);
 
 	const matches = [];
 	for (const entity of entities.values())
 		if (filter(entity))
-			matches.push(entity);
+			matches.push(
+				entity[ENTITY.PROP_OBJ_ID][1]
+			);
 	return matches;
-};
+}
+
+const localStorage_ = localStorage;
 
 /**
 	Load all entities from storage
@@ -361,29 +423,29 @@ export const entities_load = () => {
 				entity[ENTITY.PROP_OBJ_ID][1],
 				entity
 			);
-};
+}
 
 /**
 	Store all entitites into storage
 */
-export const entities_save = () => {
+export const entities_save = () => (
 	localStorage_.setItem(
 		'entities',
 		JSON.stringify(
-			entities_list()
-			.filter(entity =>
-				!entity[ENTITY.PROP_OBJ_HARD][1]
+			entities_list(
+				entity => !entity[ENTITY.PROP_OBJ_HARD][1]
 			)
+			.map(entity_get)
 		)
-	);
-};
+	)
+)
 
 /**
 	Remove all entities from storage
 */
-export const entities_reset = () => {
-	localStorage_.removeItem('entities');
-};
+export const entities_reset = () => (
+	localStorage_.removeItem('entities')
+)
 
 // UI HELPERS //
 /**
@@ -420,7 +482,7 @@ export const entity_prop_text_get = (entity, prop) => {
 		}]`
 		:	'[nicht anzeigbar]'
 	);
-};
+}
 
 /**
 	Gets a text identifying an entity
@@ -438,7 +500,7 @@ export const entity_label_get = entity => (
 			ENTITY.PROP_OBJ_ID
 		)
 	}]`
-);
+)
 
 /**
 	Get the CSS color codes for a type
@@ -457,7 +519,7 @@ export const type_color_get = type => (
 	:	class_check_descendant(type, ENTITY.CLASS_SET)
 	?	['black', 'cyan']
 	:	['white', 'green']
-);
+)
 
 /**
 	Edit a value of a prop of an entity
@@ -465,31 +527,34 @@ export const type_color_get = type => (
 	@param {ENTITY} prop
 */
 export const entity_prop_value_edit = (entity, prop) => {
+	const entity_obj = entity_get(entity);
 	const prop_obj = entity_get(prop);
 	const prop_type = prop_obj[ENTITY.PROP_PROP_TYPE][1];
 
 	switch (prop_type) {
 		case ENTITY.CLASS_BOOL:
-			entity[prop] = value_create_nat(
-				!entity_prop_native_get(entity, prop)
+			entity_obj[prop] = value_create_nat(
+				!entity_prop_native_get(entity_obj, prop)
 			);
 			break;
 		case ENTITY.CLASS_TEXT: {
 			const value_new = prompt(
 				entity_label_get(prop_obj) + ':',
 				entity_prop_native_get(
-					entity,
+					entity_obj,
 					prop
 				)
 			);
 			if (value_new !== null)
-				entity[prop] = value_create_nat(value_new);
+				entity_obj[prop] = value_create_nat(value_new);
 			break;
 		}
 		default:
 			alert('Bearbeitung von Werten dieses Typens (noch) nicht möglich.');
 	}
-};
+
+	hooks_refresh();
+}
 
 // DEFINE CORE ENTITIES //
 /**
@@ -514,7 +579,7 @@ const entity_define = (id, cls, label, props = {}) => {
 			...props
 		}
 	);
-};
+}
 
 /**
 	Create a hardcoded class
@@ -538,7 +603,7 @@ const entity_class_define = (id, label, parent, iprops, traits) => {
 		props[ENTITY.PROP_PROPS] = value_create_nat(iprops);
 	
 	entity_define(id, ENTITY.CLASS_CLASS, label, props);
-};
+}
 
 /**
 	Create a hardcoded prop
@@ -563,7 +628,7 @@ const entity_prop_define = (id, label, nullable, type, owner) => {
 			[ENTITY.PROP_PROP_OWNER]: value_create_ref(owner),
 		}
 	);
-};
+}
 
 entity_class_define(
 	ENTITY.CLASS_OBJ, 'Objekt', ENTITY.CLASS_OBJ,
@@ -614,7 +679,7 @@ entity_class_define(
 		ENTITY.TRAIT_AS_TEXT
 	]
 );
-entity_class_define(ENTITY.CLASS_BOOL, 'Wahrheitswert', ENTITY.CLASS_NUM);
+entity_class_define(ENTITY.CLASS_BOOL, 'Wahrheit', ENTITY.CLASS_NUM);
 entity_class_define(ENTITY.CLASS_INT, 'Ganzzahl', ENTITY.CLASS_NUM);
 entity_class_define(
 	ENTITY.CLASS_SET, 'Menge', ENTITY.CLASS_OBJ,
@@ -692,7 +757,7 @@ entity_prop_define(ENTITY.PROP_PROPS, 'Eigenschaften', false, ENTITY.CLASS_MAP, 
 entity_prop_define(ENTITY.PROP_TRAITS, 'Merkmale', false, ENTITY.CLASS_SET, ENTITY.TRAIT_CLASSY);
 entity_prop_define(ENTITY.PROP_CLASS_PARENT, 'Eltern-Klasse', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_CLASS);
 entity_prop_define(ENTITY.PROP_TRAIT_DEPS, 'Abhängigkeiten', false, ENTITY.CLASS_SET, ENTITY.CLASS_TRAIT);
-entity_prop_define(ENTITY.PROP_AS_TEXT, 'Darstellung als Text', false, ENTITY.CLASS_TEXT, ENTITY.TRAIT_AS_TEXT);
+entity_prop_define(ENTITY.PROP_AS_TEXT, 'Text-Repräsentation', false, ENTITY.CLASS_TEXT, ENTITY.TRAIT_AS_TEXT);
 entity_prop_define(ENTITY.PROP_PROP_TYPE, 'Wert-Typ', false, ENTITY.TRAIT_CLASSY, ENTITY.CLASS_PROP);
 entity_prop_define(ENTITY.PROP_PROP_NULL, 'Erratbar', false, ENTITY.CLASS_BOOL, ENTITY.CLASS_PROP);
 entity_prop_define(ENTITY.PROP_PROP_OWNER, 'Ursprung', false, ENTITY.TRAIT_CLASSY, ENTITY.CLASS_PROP);

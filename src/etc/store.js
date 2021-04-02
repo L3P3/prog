@@ -1,29 +1,32 @@
+import {
+	DEBUG,
+	assert,
+} from './debug.js';
+
 import {TAB} from '../ui/tab.js';
 
 export const CMD_RESET = 0;
-export const CMD_REDRAW = 1;
-export const CMD_MENU_OPEN = 2;
-export const CMD_MENU_BACK = 3;
-export const CMD_MENU_CLOSE = 4;
-export const CMD_TAB_OPEN = 5;
-export const CMD_TAB_OPEN_ENTITY = 6;
-export const CMD_TAB_CLOSE = 7;
-export const CMD_TAB_CLOSE_ALL = 8;
+export const CMD_MENU_OPEN = 1;
+export const CMD_MENU_BACK = 2;
+export const CMD_MENU_CLOSE = 3;
+export const CMD_TAB_OPEN = 4;
+export const CMD_TAB_OPEN_ENTITY = 5;
+export const CMD_TAB_CLOSE = 6;
+export const CMD_TAB_CLOSE_ALL = 7;
 
 /**
 	@typedef {{
 		id: string,
 		type: number,
-		content: number
+		content: number,
 	}} TYPE_TAB
 
 	@typedef {{
 		menu_stack: !Array<function(TYPE_STATE, function(number, *):void):Array>,
 		tab: {
 			all: !Array<TYPE_TAB>,
-			active: ?number
+			active: ?number,
 		},
-		rcount: number
 	}} TYPE_STATE
 */
 
@@ -39,19 +42,8 @@ export const reducer = [
 		menu_stack: [],
 		tab: {
 			all: [],
-			active: null
+			active: null,
 		},
-		rcount: 0
-	}),
-
-	/**
-		REDRAW
-		@param {TYPE_STATE} state
-		@return {TYPE_STATE}
-	*/
-	state => ({
-		...state,
-		rcount: state.rcount + 1
 	}),
 
 	/**
@@ -64,8 +56,8 @@ export const reducer = [
 		...state,
 		menu_stack: [
 			...state.menu_stack,
-			menu_new
-		]
+			menu_new,
+		],
 	}),
 
 	/**
@@ -75,7 +67,7 @@ export const reducer = [
 	*/
 	state => ({
 		...state,
-		menu_stack: state.menu_stack.slice(0, -1)
+		menu_stack: state.menu_stack.slice(0, -1),
 	}),
 
 	/**
@@ -85,7 +77,7 @@ export const reducer = [
 	*/
 	state => ({
 		...state,
-		menu_stack: []
+		menu_stack: [],
 	}),
 
 	/**
@@ -98,8 +90,8 @@ export const reducer = [
 		...state,
 		tab: {
 			all: state.tab.all,
-			active: tab
-		}
+			active: tab,
+		},
 	}),
 
 	/**
@@ -121,12 +113,12 @@ export const reducer = [
 							{
 								id,
 								type: TAB.ENTITY,
-								content: entity
-							}
+								content: entity,
+							},
 						]
 				),
-				active: id
-			}
+				active: id,
+			},
 		};
 	},
 
@@ -136,17 +128,29 @@ export const reducer = [
 		@param {tab} string
 		@return {TYPE_STATE}
 	*/
-	(state, tab) => ({
-		...state,
-		tab: {
-			all: state.tab.all.filter(item => item.id !== tab),
-			active: (
-				state.tab.active !== tab
-				?   state.tab.active
-				:   null// TODO use next tab
-			)
-		}
-	}),
+	(state, tab) => {
+		const index = state.tab.all.findIndex(item => item.id === tab);
+		const all = [...state.tab.all];
+		all.splice(index, 1);
+
+		DEBUG && assert(index >= 0);
+
+		return {
+			...state,
+			tab: {
+				all,
+				active: (
+					state.tab.active !== tab
+					?	state.tab.active
+					: all.length
+					?	all[
+							Math.min(index, all.length - 1)
+						].id
+					:	null
+				),
+			},
+		};
+	},
 
 	/**
 		TAB_CLOSE_ALL
@@ -157,7 +161,7 @@ export const reducer = [
 		...state,
 		tab: {
 			all: [],
-			active: null
-		}
-	})
+			active: null,
+		},
+	}),
 ];

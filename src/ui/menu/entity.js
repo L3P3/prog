@@ -1,25 +1,32 @@
+import {hook_assert} from '../../etc/lui.js';
+
 import {
 	ENTITY,
 	entity_delete,
-	entity_label_get
+	entity_label_get,
+	hook_entity,
 } from '../../etc/entity.js';
 
 export const menu_entity = entity => (
-	_,
 	store_dispatch
-) => [
-	entity_label_get(entity),
-	[
+) => {
+	const entity_obj = hook_entity(entity);
+	hook_assert(entity_obj);
+
+	return [
+		entity_label_get(entity_obj),
 		[
-			'Löschen',
-			entity[ENTITY.PROP_OBJ_HARD][1]
-			?	null
-			:	() => (
-					confirm('Objekt löschen?') && (
-						entity_delete(store_dispatch, entity[ENTITY.PROP_OBJ_ID][1]),
-						true
-					)
-				)
-		]
-	]
-]
+			[
+				'Löschen',
+				entity_obj[ENTITY.PROP_OBJ_HARD][1]
+				?	null
+				:	() => (
+						confirm('Objekt löschen?') && (
+							entity_delete(store_dispatch, entity),
+							true
+						)
+					),
+			],
+		],
+	];
+}

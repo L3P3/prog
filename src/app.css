@@ -118,8 +118,8 @@ div {
 		opacity: .3;
 	}
 	.page.blurred > div {
-		filter: blur(5px);
-		-webkit-filter: blur(5px);
+		filter: blur(2px) saturate(50%);
+		-webkit-filter: blur(2px) saturate(50%);
 	}
 }
 .page_empty {
@@ -146,11 +146,13 @@ div {
 	
 	text-align: center;
 	text-overflow: ellipsis;
+	text-shadow: 1px 1px black;
 	line-height: 50px;
 	white-space: nowrap;
 }
 .menu_entries {
 	flex-grow: 1;
+	padding: 2px;
 	
 	overflow-y: auto;
 }
@@ -159,7 +161,7 @@ div {
 	margin: 3px;
 	height: 50px;
 	
-	border-radius: 10px;
+	border-radius: 5px;
 	opacity: 0.7;
 	background: #555;
 	color: #aaa;

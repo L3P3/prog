@@ -1,26 +1,32 @@
+import {hook_map} from '../../etc/lui.js';
+
 import {
 	ENTITY,
-	entities_list,
-	entity_get,
-	entity_label_get
+	entity_label_get,
+	hook_entities,
+	hook_entity,
 } from '../../etc/entity.js';
 
 import {
 	CMD_MENU_OPEN,
-	CMD_TAB_OPEN_ENTITY
+	CMD_TAB_OPEN_ENTITY,
 } from '../../etc/store.js';
 
 export const menu_entity_open_cls = cls => (
-	_,
 	store_dispatch
 ) => [
-	'Instanzen von ' +
-	entity_label_get(
-		entity_get(cls)
+	(
+		'Instanzen von ' +
+		entity_label_get(
+			hook_entity(cls)
+		)
 	),
 	(
-		entities_list(entity =>
-			entity[ENTITY.PROP_OBJ_CLASS][1] === cls
+		hook_map(
+			hook_entity,
+			hook_entities(entity =>
+				entity[ENTITY.PROP_OBJ_CLASS][1] === cls
+			)
 		)
 		.map(entity => [
 			entity_label_get(entity),
@@ -42,7 +48,7 @@ export const menu_entity_open_cls = cls => (
 							true
 						)
 				)
-			:	null
+			:	null,
 		])
 	),
 	[
@@ -51,6 +57,6 @@ export const menu_entity_open_cls = cls => (
 			store_dispatch(CMD_TAB_OPEN_ENTITY, cls),
 			true
 		),
-		'Klasse anzeigen'
-	]
+		'Klasse anzeigen',
+	],
 ]

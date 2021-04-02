@@ -4,24 +4,24 @@ import {
 	hook_sub,
 	node,
 	node_dom,
-	node_map
+	node_map,
 } from '../etc/lui.js';
 
 import {
 	CMD_MENU_BACK,
-	CMD_MENU_CLOSE
+	CMD_MENU_CLOSE,
 } from '../etc/store.js';
 
 const MenuEntry = ({
 	store_dispatch,
 	I: {
 		action,
-		label
-	}
+		label,
+	},
 }) => (
 	hook_dom('div', {
 		F: {
-			action
+			action,
 		},
 		innerText: label,
 		onclick: (
@@ -31,14 +31,14 @@ const MenuEntry = ({
 						store_dispatch(CMD_MENU_CLOSE)
 				)
 			:	null
-		)
+		),
 	}),
 	null
 )
 
 const MenuEntries = ({
 	entries,
-	store_dispatch
+	store_dispatch,
 }) => (
 	hook_dom('div[className=menu_entries]'),
 	[
@@ -50,21 +50,21 @@ const MenuEntries = ({
 						arr.push({
 							id: index,
 							action: entry[1],
-							label: entry[0]
+							label: entry[0],
 						}),
 					arr
 				),
 				[]
 			)
 		), {
-			store_dispatch
-		})
+			store_dispatch,
+		}),
 	]
 )
 
 export const Menu = ({
 	store,
-	store_dispatch
+	store_dispatch,
 }) => {
 	const {menu_stack} = store;
 
@@ -72,7 +72,7 @@ export const Menu = ({
 
 	const [title, entries, extra] = hook_sub(
 		menu_stack[menu_stack.length - 1],
-		[store, store_dispatch]
+		[store_dispatch, store]
 	);
 
 	return [
@@ -81,10 +81,10 @@ export const Menu = ({
 				node_dom('div[className=bar_button][innerText=◀][title=Zurück]', {
 					onclick: () => (
 						store_dispatch(CMD_MENU_BACK)
-					)
+					),
 				}),
 				node_dom('div[className=menu_title]', {
-					innerText: title
+					innerText: title,
 				}),
 				extra &&
 				node_dom('div[className=bar_button]', {
@@ -97,13 +97,13 @@ export const Menu = ({
 							)
 						:	null
 					),
-					title: extra[2] || null
+					title: extra[2] || null,
 				})
 			]),
 			node(MenuEntries, {
 				entries,
-				store_dispatch
-			})
-		])
+				store_dispatch,
+			}),
+		]),
 	];
 }

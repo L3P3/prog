@@ -64,6 +64,16 @@ declare namespace lui {
 	type Component<T extends {}> = (props: T) => LuiNodeList | null;
 
 	/**
+		Defer rerenderings until next frame
+	*/
+	export function defer(): void;
+
+	/**
+		Rectify deferred rerenderings now
+	*/
+	export function defer_end(): void;
+
+	/**
 		Conditionally interrupt the instance's rendering process
 	*/
 	export function hook_assert(condition: boolean): void;
@@ -97,6 +107,11 @@ declare namespace lui {
 		Returns whether the component is being rendered for the first time
 	*/
 	export function hook_first(): boolean;
+
+	/**
+		hook_sub over variable-length array items
+	*/
+	export function hook_map<T extends any[], U extends NodeData, V>(getter: (item: U, ...deps: T) => V, data: U[], deps?: T): V[]
 
 	/**
 		Transform data and redo it on deps change
@@ -173,3 +188,5 @@ declare namespace lui {
 	*/
 	export function now(): number;
 }
+
+export = lui;
