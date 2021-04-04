@@ -52,6 +52,10 @@ var TYPE_NODELIST;
 
 var lui = {}
 
+lui.defer = function(){}
+
+lui.defer_end = function(){}
+
 /**
 	@param {boolean=} condition
 	@return {void}
