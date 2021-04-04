@@ -16,11 +16,15 @@ export const menu_app = () => {
 			installable
 			?	() => (
 					prompt_install.prompt(),
-					prompt_install = null,
 					installable_set(false),
 					false
 				)
 			:	null,
+			installable
+			?	'Eintrag zu Apps-Liste hinzufügen'
+			: prompt_install
+			?	'Angeblich bereits installiert'
+			:	'Nicht vom Browser angeboten',
 		],
 		[
 			'Alles speichern',
@@ -28,6 +32,7 @@ export const menu_app = () => {
 				entities_save(),
 				true
 			),
+			'Änderungen lokal speichern, geschieht auch automatisch beim Verlassen der Seite',
 		],
 		[
 			'Zurücksetzen',
@@ -39,6 +44,7 @@ export const menu_app = () => {
 				),
 				false
 			),
+			'Alle lokalen Änderungen und Erweiterungen verwerfen',
 		],
 		[
 			'Über dieses Programm',
@@ -46,6 +52,7 @@ export const menu_app = () => {
 				open('//l3p3.de/dok/graf.html'),
 				false
 			),
+			'Dokumentation öffnen',
 		],
 		[
 			'Test',
@@ -53,6 +60,7 @@ export const menu_app = () => {
 				alert('Hallo, Welt!'),
 				false
 			),
+			'Obligatorische Mitteilung anzeigen',
 		],
 		[
 			'©2021, L3P3.de',
@@ -60,6 +68,7 @@ export const menu_app = () => {
 				open('//l3p3.de'),
 				false
 			),
+			'Die beste Netzseite der Welt öffnen',
 		],
 	]];
 }

@@ -751,7 +751,7 @@ entity_define(ENTITY.CLASS_OPTIONAL_NONE, ENTITY.CLASS_ENUM_VALUE, 'Nichts');
 
 entity_prop_define(ENTITY.PROP_OBJ_ID, 'ID', false, ENTITY.CLASS_INT, ENTITY.CLASS_OBJ);
 entity_prop_define(ENTITY.PROP_OBJ_CLASS, 'Klasse', false, ENTITY.CLASS_CLASS, ENTITY.CLASS_OBJ);
-entity_prop_define(ENTITY.PROP_OBJ_HARD, 'Statisch', false, ENTITY.CLASS_BOOL, ENTITY.CLASS_OBJ);
+entity_prop_define(ENTITY.PROP_OBJ_HARD, 'Geschützt', false, ENTITY.CLASS_BOOL, ENTITY.CLASS_OBJ);
 entity_prop_define(ENTITY.PROP_OBJ_LABEL, 'Bezeichnung', true, ENTITY.CLASS_TEXT, ENTITY.CLASS_OBJ);
 entity_prop_define(ENTITY.PROP_PROPS, 'Eigenschaften', false, ENTITY.CLASS_MAP, ENTITY.TRAIT_CLASSY);
 entity_prop_define(ENTITY.PROP_TRAITS, 'Merkmale', false, ENTITY.CLASS_SET, ENTITY.TRAIT_CLASSY);

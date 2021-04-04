@@ -17,6 +17,7 @@ const MenuEntry = ({
 	I: {
 		action,
 		label,
+		title,
 	},
 }) => (
 	hook_dom('div', {
@@ -32,6 +33,7 @@ const MenuEntry = ({
 				)
 			:	null
 		),
+		title,
 	}),
 	null
 )
@@ -51,6 +53,7 @@ const MenuEntries = ({
 							id: index,
 							action: entry[1],
 							label: entry[0],
+							title: entry[2] || '',
 						}),
 					arr
 				),

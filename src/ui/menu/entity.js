@@ -14,7 +14,11 @@ export const menu_entity = entity => (
 	hook_assert(entity_obj);
 
 	return [
-		entity_label_get(entity_obj),
+		(
+			'Aktionen für "' +
+			entity_label_get(entity_obj) +
+			'"'
+		),
 		[
 			[
 				'Löschen',
@@ -26,6 +30,9 @@ export const menu_entity = entity => (
 							true
 						)
 					),
+				entity_obj[ENTITY.PROP_OBJ_HARD][1]
+				?	'Geschützte Objekte können nicht gelöscht werden'
+				:	'Das aktuell ausgewählte Objekt löschen',
 			],
 		],
 	];
