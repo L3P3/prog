@@ -33,3 +33,17 @@ export const hook_subscribe = list => {
 	);
 	return count;
 }
+
+export const map_primitive_id = list => (
+	list.map((value, id) => ({
+		value,
+		id
+	}))
+)
+
+export const map_object_index = list => (
+	list.map((item, index) => ({
+		...item,
+		index
+	}))
+)

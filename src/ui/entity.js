@@ -1,107 +1,91 @@
 import {
+	hook_assert,
 	hook_map,
+	hook_memo,
 	node,
 } from '../etc/lui.js';
 
 import {
-	ENTITY,
 	VALUE,
-	type_color_get,
 	entity_label_get,
-	entity_prop_entity_get,
 	entity_prop_get_raw,
-	entity_prop_native_get,
 	entity_prop_text_get,
 	entity_prop_value_edit,
 	hook_entity,
 } from '../etc/entity.js';
-import {menu_entity} from './menu/entity.js';
+import {CMD_TAB_OPEN_ENTITY} from '../etc/store.js';
 
-import {Node} from './node.js';
+import {Table} from './table.js';
 
-import {
-	CMD_MENU_OPEN,
-	CMD_TAB_OPEN_ENTITY,
-} from '../etc/store.js';
-
-const Entity_branch = (
+const Entity_prop = (
 	prop,
-	entity,
-	store_dispatch
+	entity
 ) => {
 	const entity_obj = hook_entity(entity);
-	const prop_obj = hook_entity(prop);
-	const prop_obj_type = entity_prop_entity_get(prop_obj, ENTITY.PROP_PROP_TYPE);
-	const [color, color_b] = type_color_get(
-		prop_obj_type[ENTITY.PROP_OBJ_ID][1]
-	);
 
 	const [val_type, val_value] = entity_prop_get_raw(entity_obj, prop);
 
 	return {
-		action: null,
-		//color: 'white',
-		content: node(Node, {columns: [
-			{
-				action: () => store_dispatch(CMD_TAB_OPEN_ENTITY, prop),
-				color,
-				color_b,
-				hint: `Eigenschaft vom Typen ${
-					entity_label_get(prop_obj_type)
-				}${
-					entity_prop_native_get(prop_obj, ENTITY.PROP_PROP_NULL)
-					?	', optional'
-					:	''
-				}`,
-				id: 0,
-				label: entity_label_get(prop_obj),
-			},
-			{
-				action: () => (
-					val_type === VALUE.REF
-					?	store_dispatch(CMD_TAB_OPEN_ENTITY, val_value)
-					:	val_type === VALUE.NAT &&
-							entity_prop_value_edit(entity, prop)
-				),
-				color,
-				color_b,
-				hint: (
-					val_type === VALUE.REF
-					?	'Referenziertes Objekt anzeigen'
-					:	val_type === VALUE.NAT
-						?	'Wert bearbeiten'
-						:	'Dynamisch erzeugter Wert'
-				),
-				id: 1,
-				label: entity_prop_text_get(entity_obj, prop),
-			},
-		]}),
+		fields: [
+			entity_label_get(hook_entity(prop)),
+			entity_prop_text_get(entity_obj, prop),
+			entity_label_get(entity_obj),
+		],
 		id: prop,
+		val_type,
+		val_value,
 	};
 }
+
+const Entity_columns_get = (
+	entity,
+	store_dispatch
+) => [
+	{
+		action: (_, record) => (
+			store_dispatch(CMD_TAB_OPEN_ENTITY, record.id)
+		),
+		label: 'Eigenschaft',
+		id: 'a',
+		hint: 'Eigenschafts-Objekt anzeigen',
+	},
+	{
+		action: (_, record) => (
+			record.val_type === VALUE.REF
+			?	store_dispatch(CMD_TAB_OPEN_ENTITY, record.val_value)
+			:	record.val_type === VALUE.NAT &&
+					entity_prop_value_edit(entity, record.id)
+		),
+		label: 'Wert',
+		id: entity + 'b',
+		hint: 'Wert bearbeiten oder referenziertes Objekt anzeigen',
+	},
+	{
+		label: 'Ursprung',
+		id: 'c',
+		hint: 'Nächste Klasse/Instanz, in der dieser Wert gesetzt ist',
+	},
+]
+
+const Entity_props = entity_obj => (
+	Object.keys(entity_obj).map(Number)
+)
 
 export const Entity = ({
 	entity,
 	store_dispatch
 }) => {
 	const entity_obj = hook_entity(entity);
-	const [color_f, color_b] = type_color_get(
-		entity_obj[ENTITY.PROP_OBJ_CLASS][1]
-	);
+	hook_assert(entity_obj);
 
-	return Node({
-		columns: [{
-			action: () => store_dispatch(CMD_MENU_OPEN, menu_entity(entity)),
-			color_b,
-			color_f,
-			description: 'Menü öffnen',
-			id: 0,
-			label: entity_label_get(entity_obj),
-		}],
-		branches: hook_map(
-			Entity_branch,
-			Object.keys(entity_obj).map(Number),
-			[entity, store_dispatch]
-		),
-	});
+	return [
+		node(Table, {
+			columns: hook_memo(Entity_columns_get, [entity, store_dispatch]),
+			records: hook_map(
+				Entity_prop,
+				hook_memo(Entity_props, [entity_obj, entity]),
+				[entity]
+			),
+		})
+	];
 }

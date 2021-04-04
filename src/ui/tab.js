@@ -43,21 +43,22 @@ const TabHead = ({
 	I: tab,
 	active,
 	store_dispatch,
-}) => (
-	active = tab.id === active,
+}) => {
+	const entity_label = entity_label_get(hook_entity(tab.content));
+	active = tab.id === active;
 	hook_effect(TabHead_effect_show, [
 		hook_dom('div', {
 			F: {
 				active,
 			},
-			innerText: entity_label_get(hook_entity(tab.content)),
-			title: entity_label_get(hook_entity(tab.content)),
+			innerText: entity_label,
+			title: entity_label,
 			onclick: () => store_dispatch(CMD_TAB_OPEN, tab.id),
 		}),
 		active,
-	]),
-	null
-)
+	]);
+	return null;
+}
 
 const TabBody = ({
 	store_dispatch,
