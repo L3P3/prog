@@ -13,6 +13,7 @@ export const CMD_TAB_OPEN = 4;
 export const CMD_TAB_OPEN_ENTITY = 5;
 export const CMD_TAB_CLOSE = 6;
 export const CMD_TAB_CLOSE_ALL = 7;
+export const CMD_TESTS_TOGGLE = 8;
 
 /**
 	@typedef {{
@@ -27,6 +28,7 @@ export const CMD_TAB_CLOSE_ALL = 7;
 			all: !Array<TYPE_TAB>,
 			active: ?number,
 		},
+		tests: boolean,
 	}} TYPE_STATE
 */
 
@@ -44,6 +46,7 @@ export const reducer = [
 			all: [],
 			active: null,
 		},
+		tests: false,
 	}),
 
 	/**
@@ -163,5 +166,15 @@ export const reducer = [
 			all: [],
 			active: null,
 		},
+	}),
+
+	/**
+		TESTS_TOGGLE
+		@param {TYPE_STATE} state
+		@return {TYPE_STATE}
+	*/
+	state => ({
+		...state,
+		tests: !state.tests,
 	}),
 ];

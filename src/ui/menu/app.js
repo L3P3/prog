@@ -4,10 +4,11 @@ import {
 	entities_reset,
 	entities_save,
 } from '../../etc/entity.js';
+import {CMD_TESTS_TOGGLE} from '../../etc/store.js';
 
 let prompt_install = null;
 
-export const menu_app = () => {
+export const menu_app = store_dispatch => {
 	const [installable, installable_set] = hook_state(prompt_install !== null);
 
 	return ['Erweitert', [
@@ -57,10 +58,10 @@ export const menu_app = () => {
 		[
 			'Test',
 			() => (
-				alert('Hallo, Welt!'),
+				store_dispatch(CMD_TESTS_TOGGLE),
 				false
 			),
-			'Obligatorische Mitteilung anzeigen',
+			'Einfach ausprobieren',
 		],
 		[
 			'©2021, L3P3.de',

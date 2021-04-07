@@ -1,18 +1,20 @@
 import {
 	lui_,
 	hook_reducer,
-	node
+	node,
 } from './etc/lui.js';
 
 import {
 	entities_load,
-	entities_save
+	entities_save,
 } from './etc/entity.js';
 
 import {reducer} from './etc/store.js';
 
+import {CursorMask} from './ui/cursormask.js';
 import {Menu} from './ui/menu.js';
 import {Tabs} from './ui/tab.js';
+import {Testbox} from './ui/testbox.js';
 
 location.hash !== '#reset' &&
 	entities_load();
@@ -26,11 +28,14 @@ lui_.init(() => {
 		node(Tabs, {
 			blurred: store.menu_stack.length > 0,
 			store_dispatch,
-			tab: store.tab
+			tab: store.tab,
 		}),
 		node(Menu, {
 			store,
-			store_dispatch
-		})
+			store_dispatch,
+		}),
+		store.tests &&
+		node(Testbox),
+		node(CursorMask),
 	]];
 });

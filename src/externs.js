@@ -230,3 +230,5 @@ function open(url){}
 function onbeforeinstallprompt(){}
 function onbeforeunload(){}
 function onerror(){}
+function onmousemove(){}
+function onmouseup(){}
