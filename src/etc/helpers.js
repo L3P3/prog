@@ -47,12 +47,18 @@ let hook_mouse_current_xi = 0;
 let hook_mouse_current_yi = 0;
 let hook_mouse_current_cursor = '';
 
+/**
+	@noinline
+*/
 const hook_mouse_handle = event => (
 	event.preventDefault(),
 	hook_mouse_current_x = event.clientX,
 	hook_mouse_current_y = event.clientY
 )
 
+/**
+	@noinline
+*/
 const hook_mouse_recall = callback => (
 	callback(
 		hook_mouse_current_x,
@@ -63,6 +69,9 @@ const hook_mouse_recall = callback => (
 	)
 )
 
+/**
+	@noinline
+*/
 const hook_mouse_up = () => (
 	hook_mouse_current_up &&
 		hook_mouse_recall(hook_mouse_current_up),
