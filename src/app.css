@@ -246,8 +246,8 @@ div {
 	display: inline-block;
 	overflow: hidden;
 	width: 100px;
-	height: 24px;
-	padding: 0 2px;
+	height: 28px;
+	padding: 2px 4px;
 
 	text-overflow: ellipsis;
 	line-height: 24px;
@@ -261,12 +261,19 @@ div {
 	display: inline-block;
 	overflow: hidden;
 	width: 5px;
-	height: 24px;
+	height: 28px;
 	background: #222;
+	border-right: 1px solid #222;
 	cursor: col-resize;
 }
-.table_head_handle:hover, .table_head_handle:active {
-	background: #ddd;
+.table_head_handle:hover, .table_head_handle.active {
+	border-color: #ddd;
+}
+.table_head > div:first-child {
+	border-top-left-radius: 5px;
+}
+.table_head > div:last-child {
+	border-top-right-radius: 5px;
 }
 .table_row > div {
 	border-right: 1px solid #222;

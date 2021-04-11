@@ -53,15 +53,19 @@ const Table_columns_reducer = [
 	),
 ];
 
-const TableHead_handle_down = () => [
-	TableHead_handle_move,
-	TableHead_handle_up,
-	'col-resize',
-]
-const TableHead_handle_move = (x, y, xi, yi, width, dom) => (
-	dom.style.width = Math.max(width + (x - xi) - 5, 5) + 'px'
+const TableHead_handle_down = (x, y, xi, yi, width, index, resizing_set) => (
+	resizing_set(width),
+	[
+		TableHead_handle_move,
+		TableHead_handle_up,
+		'col-resize',
+	]
 )
-const TableHead_handle_up = (x, y, xi, yi, width, dom, index, columns_dispatch) => (
+const TableHead_handle_move = (x, y, xi, yi, width, index, resizing_set) => (
+	resizing_set(Math.max(width + (x - xi) - 5, 5))
+)
+const TableHead_handle_up = (x, y, xi, yi, width, index, resizing_set, columns_dispatch) => (
+	resizing_set(null),
 	columns_dispatch(TABLE_COLUMNS_RESIZE, [
 		index,
 		Math.max(width + (x - xi), 10),
@@ -77,23 +81,30 @@ const TableHead = ({
 		width,
 	},
 }) => {
-	const [dom, dom_set] = hook_state(null);
+	const [resizing, resizing_set] = hook_state(null);
 	return [
 		node_dom('div[className=table_head_cell]', {
 			innerText: label,
-			R: dom_set,
 			S: {
-				width: (width - 5) + 'px'
+				width: (
+					resizing === null
+					?	width - 5
+					:	resizing
+				) + 'px'
 			},
 			title: hint || '',
 		}),
-		node_dom('div[className=table_head_handle]', {
+		node_dom('div', {
+			F: {
+				active: resizing !== null,
+				table_head_handle: true,
+			},
 			onmousedown: hook_mouse(
 				TableHead_handle_down,
 				[
 					width,
-					dom,
 					index,
+					resizing_set,
 					columns_dispatch,
 				]
 			),
