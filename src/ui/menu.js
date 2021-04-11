@@ -7,6 +7,7 @@ import {
 	node_map,
 } from '../etc/lui.js';
 
+import {hook_keyboard} from '../etc/helpers.js';
 import {
 	CMD_MENU_BACK,
 	CMD_MENU_CLOSE,
@@ -69,6 +70,13 @@ export const Menu = ({
 	store,
 	store_dispatch,
 }) => {
+	hook_keyboard(
+		27,
+		() => (
+			store_dispatch(CMD_MENU_CLOSE)
+		)
+	);
+
 	const {menu_stack} = store;
 
 	hook_assert(menu_stack.length > 0);
