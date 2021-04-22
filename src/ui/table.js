@@ -1,4 +1,6 @@
 import {
+	defer,
+	defer_end,
 	hook_callback,
 	hook_dom,
 	hook_effect,
@@ -53,7 +55,11 @@ const Table_columns_reducer = [
 	),
 ];
 
-const TableHead_handle_down = (x, y, xi, yi, width, index, resizing_set) => (
+const TableHead_handle_down = (
+	x, y,
+	xi, yi,
+	width, resizing_set
+) => (
 	resizing_set(width),
 	[
 		TableHead_handle_move,
@@ -61,15 +67,27 @@ const TableHead_handle_down = (x, y, xi, yi, width, index, resizing_set) => (
 		'col-resize',
 	]
 )
-const TableHead_handle_move = (x, y, xi, yi, width, index, resizing_set) => (
-	resizing_set(Math.max(width + (x - xi) - 5, 5))
+const TableHead_handle_move = (
+	x, y,
+	xi, yi,
+	width, resizing_set
+) => (
+	resizing_set(
+		Math.max(width + x - xi, 15)
+	)
 )
-const TableHead_handle_up = (x, y, xi, yi, width, index, resizing_set, columns_dispatch) => (
-	resizing_set(null),
+const TableHead_handle_up = (
+	x, y,
+	xi, yi,
+	width, resizing_set, index, columns_dispatch
+) => (
+	defer(),
 	columns_dispatch(TABLE_COLUMNS_RESIZE, [
 		index,
-		Math.max(width + (x - xi), 10),
-	])
+		Math.max(width + x - xi, 15),
+	]),
+	resizing_set(null),
+	defer_end()
 )
 
 const TableHead = ({
@@ -88,9 +106,9 @@ const TableHead = ({
 			S: {
 				width: (
 					resizing === null
-					?	width - 5
+					?	width
 					:	resizing
-				) + 'px'
+				) - 5 + 'px'
 			},
 			title: hint || '',
 		}),
@@ -103,8 +121,8 @@ const TableHead = ({
 				TableHead_handle_down,
 				[
 					width,
-					index,
 					resizing_set,
+					index,
 					columns_dispatch,
 				]
 			),
@@ -178,7 +196,6 @@ export const Table = ({
 	const [columns, columns_dispatch] = hook_reducer(Table_columns_reducer);
 	hook_effect(Table_columns_effect, [columns_raw, columns_dispatch]);
 
-	hook_dom('div');
 	return [
 		node_dom('div[className=table_head]', null, [
 			node_map(TableHead, columns, {columns_dispatch}),

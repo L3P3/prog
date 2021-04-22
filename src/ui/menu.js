@@ -1,6 +1,7 @@
 import {
 	hook_assert,
 	hook_dom,
+	hook_static,
 	hook_sub,
 	node,
 	node_dom,
@@ -72,9 +73,9 @@ export const Menu = ({
 }) => {
 	hook_keyboard(
 		27,
-		() => (
+		hook_static(() => (
 			store_dispatch(CMD_MENU_CLOSE)
-		)
+		))
 	);
 
 	const {menu_stack} = store;
@@ -90,9 +91,9 @@ export const Menu = ({
 		node_dom('div[className=menu]', null, [
 			node_dom('div[className=bar]', null, [
 				node_dom('div[className=bar_button][innerText=◀][title=Zurück]', {
-					onclick: () => (
+					onclick: hook_static(() => (
 						store_dispatch(CMD_MENU_BACK)
-					),
+					)),
 				}),
 				node_dom('div[className=menu_title]', {
 					innerText: title,

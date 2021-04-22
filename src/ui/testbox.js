@@ -25,7 +25,7 @@ const Testbox_color_get = () => (
 
 export const Testbox = () => {
 	const [pos, pos_set] = hook_state([0, 0]);
-	hook_dom('div[style=position:fixed;width:100px;height:100px;cursor:grab]', {
+	hook_dom('div[style=position:fixed;width:100px;height:100px;left:0;top:0;cursor:grab]', {
 		onmousedown: hook_mouse(Testbox_down, [pos, pos_set]),
 		S: {
 			background: hook_memo(Testbox_color_get),
