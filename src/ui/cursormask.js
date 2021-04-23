@@ -20,7 +20,7 @@ export const CursorMask = () => (
 	[cursor, cursor_set_i] = hook_state(null),
 	[
 		cursor &&
-		node_dom('div[style=position:fixed;width:100%;height:100%;background:transparent]', {
+		node_dom('div[className=cursormask]', {
 			S: {
 				cursor,
 			},
