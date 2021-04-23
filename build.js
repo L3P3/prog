@@ -29,7 +29,7 @@ console.log('optimizing...');
 let code_css = fs.readFileSync('./src/app.css', 'utf8');
 const code_css_promise = (
 	prod
-	? require('cssnano').process(code_css)
+	? require('cssnano')().process(code_css)
 	: null
 );
 
