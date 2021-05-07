@@ -11,7 +11,7 @@ import {
 	node_map,
 } from '../etc/lui.js';
 
-import {hook_mouse} from '../etc/helpers.js';
+import {hook_mouse} from '../etc/mouse.js';
 
 const column_settings_default = {
 	action: null,

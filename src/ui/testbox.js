@@ -4,7 +4,7 @@ import {
 	hook_state,
 } from '../etc/lui.js';
 
-import {hook_mouse} from '../etc/helpers.js';
+import {hook_mouse} from '../etc/mouse.js';
 
 const Testbox_down = () => (
 	[

@@ -1,6 +1,6 @@
 {
 	"name": "prog",
-	"version": "0.4.2",
+	"version": "0.4.3",
 	"repository": "https://github.com/l3p3/prog",
 	"description": "graphical programming system",
 	"main": "app.js",

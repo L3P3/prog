@@ -8,7 +8,7 @@ import {
 	node_map,
 } from '../etc/lui.js';
 
-import {hook_keyboard} from '../etc/helpers.js';
+import {hook_keyboard} from '../etc/keyboard.js';
 import {
 	CMD_MENU_BACK,
 	CMD_MENU_CLOSE,
@@ -71,14 +71,21 @@ export const Menu = ({
 	store,
 	store_dispatch,
 }) => {
+	const {menu_stack} = store;
+
+	const handler_close = hook_static(event =>
+		store_dispatch(
+			event.shiftKey
+			?	CMD_MENU_CLOSE
+			:	CMD_MENU_BACK
+		)
+	);
 	hook_keyboard(
 		27,
-		hook_static(() => (
-			store_dispatch(CMD_MENU_CLOSE)
-		))
+		menu_stack.length > 0
+		?	handler_close
+		:	null
 	);
-
-	const {menu_stack} = store;
 
 	hook_assert(menu_stack.length > 0);
 
@@ -90,10 +97,8 @@ export const Menu = ({
 	return [
 		node_dom('div[className=menu]', null, [
 			node_dom('div[className=bar]', null, [
-				node_dom('div[className=bar_button][innerText=◀][title=Zurück]', {
-					onclick: hook_static(() => (
-						store_dispatch(CMD_MENU_BACK)
-					)),
+				node_dom('div[className=bar_button][innerText=◀][title=Zurück/Schließen]', {
+					onclick: handler_close,
 				}),
 				node_dom('div[className=menu_title]', {
 					innerText: title,

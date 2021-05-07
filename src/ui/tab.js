@@ -1,6 +1,7 @@
 import {
 	hook_dom,
 	hook_effect,
+	hook_static,
 	node,
 	node_dom,
 	node_map,
@@ -11,15 +12,17 @@ import {
 	entity_label_get,
 	hook_entity,
 } from '../etc/entity.js';
-
-import {Entity} from './entity.js';
-import {menu_main} from './menu/main.js';
-
+import {hook_keyboard} from '../etc/keyboard.js';
 import {
 	CMD_MENU_OPEN,
 	CMD_TAB_OPEN,
 	CMD_TAB_CLOSE,
+	CMD_TAB_CLOSE_ALL,
 } from '../etc/store.js';
+
+import {Entity} from './entity.js';
+import {menu_main} from './menu/main.js';
+
 
 /**
 	The type of a tab
@@ -97,41 +100,56 @@ export const Tabs = ({
 	blurred,
 	store_dispatch,
 	tab,
-}) => [
-	node_dom('div[className=bar]', null, [
-		node_dom('div[className=bar_button][innerText=☰][title=Menü öffnen]', {
-			onclick: () => store_dispatch(CMD_MENU_OPEN, menu_main),
-		}),
-		node(TabHeads, {
-			store_dispatch,
-			tab,
-		}),
-		node_dom('div[className=bar_button]',
-			tab.all.length > 0
-			?	{
-					innerText: '×',
-					onclick: () => store_dispatch(CMD_TAB_CLOSE, tab.active),
-					title: 'Seite schließen',
-				}
-			:	{
-					innerText: '+',
-					onclick: () => entity_create(store_dispatch),
-					title: 'Objekt erstellen',
-				}
-		),
-	]),
-	node_dom('div', {
-		F: {
-			page: true,
-			blurred,
-		},
-	}, [
-		tab.active !== null &&
-			node(TabBody, {
-				store_dispatch,
-				tab: tab.all.find(item => item.id === tab.active),
+}) => {
+	const tab_close = hook_static(event =>
+		store_dispatch(
+			event.shiftKey
+			?	CMD_TAB_CLOSE_ALL
+			:	CMD_TAB_CLOSE
+		)
+	);
+
+	hook_keyboard(
+		27,
+		tab_close
+	);
+
+	return [
+		node_dom('div[className=bar]', null, [
+			node_dom('div[className=bar_button][innerText=☰][title=Menü öffnen]', {
+				onclick: () => store_dispatch(CMD_MENU_OPEN, menu_main),
 			}),
-		tab.active === null &&
-			node_dom('div[className=page_empty][innerText=Nichts geöffnet.]'),
-	]),
-]
+			node(TabHeads, {
+				store_dispatch,
+				tab,
+			}),
+			node_dom('div[className=bar_button]',
+				tab.all.length > 0
+				?	{
+						innerText: '×',
+						onclick: tab_close,
+						title: 'Seite(n) schließen',
+					}
+				:	{
+						innerText: '+',
+						onclick: () => entity_create(store_dispatch),
+						title: 'Objekt erstellen',
+					}
+			),
+		]),
+		node_dom('div', {
+			F: {
+				page: true,
+				blurred,
+			},
+		}, [
+			tab.active !== null &&
+				node(TabBody, {
+					store_dispatch,
+					tab: tab.all.find(item => item.id === tab.active),
+				}),
+			tab.active === null &&
+				node_dom('div[className=page_empty][innerText=Nichts geöffnet.]'),
+		]),
+	];
+}

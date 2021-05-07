@@ -128,10 +128,19 @@ export const reducer = [
 	/**
 		TAB_CLOSE
 		@param {TYPE_STATE} state
-		@param {tab} string
+		@param {?tab|void} string
 		@return {TYPE_STATE}
 	*/
 	(state, tab) => {
+		if (
+			!tab &&
+			(
+				tab = state.tab.active
+			) === null
+		) {
+			return state;
+		}
+
 		const index = state.tab.all.findIndex(item => item.id === tab);
 		const all = [...state.tab.all];
 		all.splice(index, 1);
