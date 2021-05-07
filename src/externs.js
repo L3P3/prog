@@ -221,6 +221,16 @@ var localStorage = {
 	removeItem: function(){}
 }
 
+function addEventListener(
+	/** string */ eventName,
+	/** function */ handler,
+	/** {passive: boolean} */ options
+){}
+function removeEventListener(
+	/** string */ eventName,
+	/** function */ handler
+){}
+
 /**
 	@param {string} url
 	@return {void}

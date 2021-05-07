@@ -11,7 +11,7 @@ import {
 	node_map,
 } from '../etc/lui.js';
 
-import {hook_mouse} from '../etc/mouse.js';
+import {hook_drag} from '../etc/drag.js';
 
 const column_settings_default = {
 	action: null,
@@ -117,7 +117,7 @@ const TableHead = ({
 				active: resizing !== null,
 				table_head_handle: true,
 			},
-			onmousedown: hook_mouse(
+			...hook_drag(
 				TableHead_handle_down,
 				[
 					width,
