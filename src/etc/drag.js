@@ -83,12 +83,12 @@ const drag_callback = (
 	deps,
 	event
 ) => {
+	drag_current_deps &&
+		drag_up();
+
 	const touch = event.type === 'touchstart';
 
 	drag_handle(event, touch);
-
-	drag_current_deps &&
-		drag_up();
 
 	drag_current_deps = deps;
 	drag_current_xi = drag_current_x;

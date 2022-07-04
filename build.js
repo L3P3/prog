@@ -93,7 +93,7 @@ if (code_css_promise !== null)
 		code_css = code_css_new;
 	}
 
-const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><link rel=manifest href=/prog-manifest.json><meta name=viewport content="width=device-width"><style>${code_css}</style></head><body><script src=https://cdn.jsdelivr.net/gh/L3P3/lui@dist/lui.js></script><script>${code_js}</script></body></html>`;
+const code_html = `<!doctype html><html><head><title>Grafische Programmierung</title><link rel=manifest href=/prog-manifest.json><meta name=viewport content="width=device-width"><style>${code_css}</style></head><body><script src=https://cdn.jsdelivr.net/gh/L3P3/lui@v1.2.x/lui.js></script><script>${code_js}</script></body></html>`;
 
 if (fs.readFileSync('./build/app.html', 'utf8') === code_html) {
 	console.log('no file changes');
